@@ -1,7 +1,7 @@
 import React from "react";
 import { Layout } from "antd";
 import Sidebar from "./Sidebar";
-
+ import "./Layout.css";
 const { Sider, Content } = Layout;
 
 interface MasterLayoutProps {
@@ -10,7 +10,7 @@ interface MasterLayoutProps {
 
 const MasterLayout: React.FC<MasterLayoutProps> = ({ children }) => {
     return (
-        <Layout style={{ minHeight: "100vh", minWidth: "100vw" }}>
+        <Layout style={{ minHeight: "100vh", minWidth: "120vw"}}>
             <Sider collapsible breakpoint="lg">
                 <div
                     style={{
@@ -21,9 +21,9 @@ const MasterLayout: React.FC<MasterLayoutProps> = ({ children }) => {
                         margin: "16px 0",
                     }}
                 >
-                    ERP
+                    Aroma POS
                 </div>
-                <Sidebar />
+                <Sidebar/>
             </Sider>
 
             <Layout>
@@ -31,11 +31,6 @@ const MasterLayout: React.FC<MasterLayoutProps> = ({ children }) => {
                     {children}
                 </Content>
             </Layout>
-            {/* <Layout>
-                <Content style={{ margin: "16px", padding: 24, background: "#fff" }}>
-                    {children}
-                </Content>
-            </Layout> */}
         </Layout>
     );
 };

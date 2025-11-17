@@ -1,0 +1,78 @@
+/* SIDEBAR */
+.sidebar {
+  background: linear-gradient(
+    135deg,
+    #3a6bb0 0%,      /* top-left dark blue */
+    #4a79c7 25%,     /* lighter blue mid */
+    #5a8edd 50%,     /* mid-tone blue */
+    #6ca1e4 75%,     /* lighter tone */
+    #7eb3f0 100%     /* bottom-right bright blue */
+  );
+  color: #f8fafc;
+  height: calc(100% - 45px);
+  overflow-y: auto;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* MENU BASE */
+.sidebar .ant-menu {
+  background: transparent !important;
+  font-size: 13px !important;
+}
+
+/* MAIN ITEMS (icons start at left sharp edge) */
+.sidebar .ant-menu-item,
+.sidebar .ant-menu-submenu-title {
+  color: #f8fafc !important;
+  padding: 2px 0 2px 4px !important; /* updated for left-edge alignment */
+  border-radius: 0 !important;
+}
+
+/* MAIN MENU HOVER */
+.sidebar .ant-menu-item:hover,
+.sidebar .ant-menu-submenu-title:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 0 !important;
+}
+
+/* SUBMENU CONTAINER (no space between menu & submenu) */
+.sidebar .ant-menu-sub {
+  background: rgba(0, 0, 0, 0.25) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* SUB MENU ITEMS */
+.sidebar .ant-menu-sub .ant-menu-item {
+  padding-left: 34px !important;
+  height: 32px !important;
+  line-height: 32px !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  position: relative;
+}
+
+/* NO HOVER FOR SUB ITEMS */
+.sidebar .ant-menu-sub .ant-menu-item:hover {
+  background: transparent !important;
+}
+
+/* SELECTED SUB ITEM */
+.sidebar .ant-menu-sub .ant-menu-item-selected {
+  background: none !important;
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
+/* "|" INDICATOR */
+.sidebar .ant-menu-sub .ant-menu-item-selected::before {
+  content: "|";
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ffffff;
+  font-weight: bold;
+}
