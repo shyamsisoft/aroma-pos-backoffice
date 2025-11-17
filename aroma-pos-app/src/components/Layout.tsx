@@ -11,7 +11,20 @@ interface MasterLayoutProps {
 const MasterLayout: React.FC<MasterLayoutProps> = ({ children }) => {
     return (
         <Layout style={{ minHeight: "100vh", minWidth: "100vw" }}>
-            <Sider collapsible breakpoint="lg">
+            {/* Fixed Sidebar */}
+            <Sider
+                width={250} // fixed width
+                style={{
+                    height: "100vh", // full viewport height
+                    position: "sticky", // make sidebar sticky
+                    top: 0,
+                    left: 0,
+                    overflow: "auto", // scroll sidebar if content is tall
+                    background: "#001529", // default antd sider color
+                }}
+                collapsible
+                breakpoint="lg"
+            >
                 <div
                     style={{
                         color: "white",
@@ -26,16 +39,18 @@ const MasterLayout: React.FC<MasterLayoutProps> = ({ children }) => {
                 <Sidebar />
             </Sider>
 
-            <Layout>
+            {/* Scrollable Content */}
+            <Layout
+                style={{
+                    marginLeft: 0, // no margin needed, sider is fixed
+                    flex: 1,
+                    overflowY: "auto", // content scrolls
+                }}
+            >
                 <Content style={{ margin: "16px", padding: 24, background: "#fff" }}>
                     {children}
                 </Content>
             </Layout>
-            {/* <Layout>
-                <Content style={{ margin: "16px", padding: 24, background: "#fff" }}>
-                    {children}
-                </Content>
-            </Layout> */}
         </Layout>
     );
 };

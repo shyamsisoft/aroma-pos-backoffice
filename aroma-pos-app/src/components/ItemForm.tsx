@@ -88,8 +88,11 @@ const ItemForm: React.FC<ItemFormProps> = ({
                         <Button type="primary" onClick={() => setIsEditing(true)}>
                             Edit
                         </Button>
+
                     )}
+
                 </Space>
+                <Button disabled={isEditing} onClick={onCancelEdit}>Back</Button>
             </Form>
         </div>
     );
