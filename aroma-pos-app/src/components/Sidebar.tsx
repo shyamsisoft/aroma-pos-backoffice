@@ -23,7 +23,7 @@ const Sidebar: React.FC = () => {
     };
 
     return (
-        <div className="sidebar">
+        <div>
             <Menu
                 theme="dark"
                 mode="inline"

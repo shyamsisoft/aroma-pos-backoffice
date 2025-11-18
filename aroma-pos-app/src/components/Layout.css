@@ -1,0 +1,93 @@
+/* SIDEBAR */
+.sidebar {
+    background: linear-gradient(
+        to bottom,
+        #83bbe5 0%,      
+        #5ea0c6 40%,     
+        #2c8bc7 100%     
+    );
+    color: #ffffff;
+    overflow-y: auto;
+    font-family: "Segoe UI", sans-serif;
+
+    --antd-menu-hover-bg: transparent !important;
+    --antd-menu-active-bg: transparent !important;
+    --antd-menu-item-selected-bg: transparent !important;
+    --antd-menu-item-active-bg: transparent !important;
+    --antd-menu-item-hover-bg: transparent !important;
+}
+
+/* MENU BASE */
+.sidebar .ant-menu {
+    background: transparent !important;
+    font-size: 13px !important;
+}
+
+/* MAIN ITEMS */
+.sidebar .ant-menu-item,
+.sidebar .ant-menu-submenu-title {
+    color: #ffffff !important;
+    padding: 2px 0 2px 4px !important;
+    border-radius: 0 !important;
+}
+
+/* MAIN MENU HOVER */
+.sidebar .ant-menu-item:hover,
+.sidebar .ant-menu-submenu-title:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* REMOVE SELECTED (TOP LEVEL) */
+.sidebar .ant-menu-item-selected,
+.sidebar .ant-menu-submenu-title-selected {
+    background: transparent !important;
+    color: #ffffff !important;
+    font-weight: normal !important;
+    box-shadow: none !important;
+}
+
+/* REMOVE LEFT HIGHLIGHT BAR */
+.sidebar .ant-menu-item::after,
+.sidebar .ant-menu-submenu-title::after {
+    display: none !important;
+}
+
+/* ---------- SUBMENU RED BACKGROUND WHEN OPEN ---------- */
+.sidebar .ant-menu-submenu-open > .ant-menu-sub {
+    background: #3c6883 !important;   /* RED */
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* SUBMENU ITEMS */
+.sidebar .ant-menu-sub .ant-menu-item {
+    padding-left: 34px !important;
+    height: 32px !important;
+    line-height: 32px !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    color: #ffffff !important;
+}
+
+/* ---------- REMOVE SUBMENU HOVER ---------- */
+.sidebar .ant-menu-sub .ant-menu-item:hover {
+    background: transparent !important;   /* no hover */
+}
+
+/* SUBMENU SELECTED ITEM */
+.sidebar .ant-menu-sub .ant-menu-item-selected {
+    background: transparent !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+}
+
+/* "|" INDICATOR */
+.sidebar .ant-menu-sub .ant-menu-item-selected::before {
+    content: "|";
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ffffff;
+    font-weight: bold;
+}
