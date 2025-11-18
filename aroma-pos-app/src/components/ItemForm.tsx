@@ -1,40 +1,39 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Space } from "antd";
+import { Form, Input, InputNumber, Button, Space, Card } from "antd";
+import type ItemSchema from "../types/ItemSchema";
 
-export interface ItemFormValues {
-    key?: string;
-    name: string;
-    description: string;
+export interface ProductFormValues {
+    [field: string]: any; // Allow any dynamic field
 }
 
+
+
 interface ItemFormProps {
-    item?: ItemFormValues;
+    schema: ItemSchema[];
+    item?: ProductFormValues;
     mode: "view" | "edit" | "add";
-    onSave: (values: ItemFormValues) => void;
+    onSave: (values: ProductFormValues) => void;
     onCancelEdit: () => void;
 }
 
-const ItemForm: React.FC<ItemFormProps> = ({
-    item,
-    mode,
-    onSave,
-    onCancelEdit,
-}) => {
+const ItemForm: React.FC<ItemFormProps> = ({ schema, item, mode, onSave, onCancelEdit }) => {
     const [form] = Form.useForm();
-    const [isEditing, setIsEditing] = useState(mode === "edit");
+    const [isEditing, setIsEditing] = useState(mode === "edit" || mode === "add");
 
     useEffect(() => {
         if (item) {
             form.setFieldsValue(item);
         } else {
-            form.resetFields();
+            const initial: any = {};
+            schema.forEach((f) => (initial[f.fieldname] = f.dataField));
+            form.setFieldsValue(initial);
         }
-    }, [item, form]);
+    }, [item, schema, form]);
 
     const handleSave = async () => {
         try {
             const values = await form.validateFields();
-            onSave({ ...item, ...values });
+            onSave(values);
             setIsEditing(false);
         } catch (err) {
             console.log("Validation failed:", err);
@@ -42,59 +41,62 @@ const ItemForm: React.FC<ItemFormProps> = ({
     };
 
     return (
-        <div
-            style={{
-                background: "#fff",
-                borderRadius: 12,
-                padding: 20,
-                boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-                height: "100%",
-            }}
-        >
-            <h3 style={{ marginBottom: 20 }}>
-                {mode === "add"
-                    ? "Add New Item"
-                    : isEditing
-                        ? "Edit Item"
-                        : "Item Details"}
-            </h3>
-
+        <Card style={{ padding: 20, borderRadius: 12, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
             <Form form={form} layout="vertical" disabled={!isEditing && mode !== "add"}>
-                <Form.Item
-                    label="Item Name"
-                    name="name"
-                    rules={[{ required: true, message: "Please enter item name" }]}
-                >
-                    <Input placeholder="Enter item name" />
-                </Form.Item>
+                {schema.map((field) => {
+                    const rules =
+                        field.validations?.map((rule) => {
+                            if (rule === "required") return { required: true, message: `${field.label} is required` };
+                            if (rule.startsWith("min:")) return { min: parseInt(rule.split(":")[1]), message: `${field.label} min value` };
+                            return {};
+                        }) || [];
 
-                <Form.Item
-                    label="Description"
-                    name="description"
-                    rules={[{ required: true, message: "Please enter description" }]}
-                >
-                    <Input.TextArea rows={3} placeholder="Enter description" />
-                </Form.Item>
+                    switch (field.type) {
+                        case "string":
+                            return (
+                                <Form.Item key={field.fieldname} label={field.label} name={field.fieldname} rules={rules}>
+                                    <Input disabled={!isEditing} placeholder={`Enter ${field.label}`} />
+                                </Form.Item>
+                            );
+                        case "number":
+                            return (
+                                <Form.Item key={field.fieldname} label={field.label} name={field.fieldname} rules={rules}>
+                                    <InputNumber style={{ width: "100%" }} min={0} disabled={!isEditing} placeholder={`Enter ${field.label}`} />
+                                </Form.Item>
+                            );
+                        case "boolean":
+                            return (
+                                <Form.Item key={field.fieldname} name={field.fieldname} valuePropName="checked">
+                                    <Input type="checkbox" disabled={!isEditing} /> {field.label}
+                                </Form.Item>
+                            );
+                        default:
+                            return null;
+                    }
+                })}
 
-                <Space>
-                    {isEditing || mode === "add" ? (
+                <Space style={{ marginTop: 16 }}>
+                    {(isEditing || mode === "add") && (
                         <>
                             <Button type="primary" onClick={handleSave}>
                                 Save
                             </Button>
                             <Button onClick={onCancelEdit}>Cancel</Button>
                         </>
-                    ) : (
+                    )}
+                    {!isEditing && mode !== "add" && (
                         <Button type="primary" onClick={() => setIsEditing(true)}>
                             Edit
                         </Button>
-
                     )}
-
+                    {!isEditing && (
+                        <Button onClick={onCancelEdit} style={{ marginLeft: 10 }}>
+                            Back
+                        </Button>
+                    )}
                 </Space>
-                <Button disabled={isEditing} onClick={onCancelEdit}>Back</Button>
             </Form>
-        </div>
+        </Card>
     );
 };
 

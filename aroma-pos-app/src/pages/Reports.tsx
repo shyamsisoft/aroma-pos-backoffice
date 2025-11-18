@@ -2,16 +2,15 @@ import React, { useState } from "react";
 import { Card, Button, Table, Space } from "antd";
 import { PlusOutlined, EditOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
-import APMasterForm, { type APFormValues } from "../components/APMasterForm.tsx";
+import APMasterForm, { type ProductFormValues } from "../components/APMasterForm";
 
-interface Item {
-    key: string;
-    name: string;
-    description: string;
+export interface DynamicFormValues {
+    key?: string;
+    [field: string]: any; // Allow any dynamic field
 }
 
 const ItemMasterPage: React.FC = () => {
-    const [data, setData] = useState<Item[]>([
+    const [data, setData] = useState<DynamicFormValues[]>([
         { key: "1", name: "Item A", description: "First item" },
         { key: "2", name: "Item B", description: "Second item" },
     ]);
@@ -19,13 +18,13 @@ const ItemMasterPage: React.FC = () => {
     const [formState, setFormState] = useState<{
         open: boolean;
         mode: "add" | "edit";
-        record?: Item;
+        record?: DynamicFormValues;
     }>({
         open: false,
         mode: "add",
     });
 
-    const columns: ColumnsType<Item> = [
+    const columns: ColumnsType<DynamicFormValues> = [
         { title: "Name", dataIndex: "name", key: "name" },
         { title: "Description", dataIndex: "description", key: "description" },
         {
@@ -36,7 +35,7 @@ const ItemMasterPage: React.FC = () => {
                     <Button
                         icon={<EditOutlined />}
                         onClick={() =>
-                            setFormState({ open: true, mode: "edit", record: record })
+                            setFormState({ open: true, mode: "edit", record })
                         }
                     >
                         Edit
@@ -46,12 +45,11 @@ const ItemMasterPage: React.FC = () => {
         },
     ];
 
-    const handleSubmit = (values: APFormValues) => {
+    const handleSubmit = (values: ProductFormValues) => {
         if (formState.mode === "add") {
-            const newItem: Item = {
+            const newItem: DynamicFormValues = {
                 key: (data.length + 1).toString(),
-                name: values.name,
-                description: values.description,
+                ...values,
             };
             setData([...data, newItem]);
         } else if (formState.mode === "edit" && values.key) {
@@ -61,7 +59,7 @@ const ItemMasterPage: React.FC = () => {
             setData(updated);
         }
 
-        setFormState({ ...formState, open: false });
+        setFormState({ open: false, mode: "add" }); // Reset form state
     };
 
     return (
@@ -78,12 +76,17 @@ const ItemMasterPage: React.FC = () => {
             }
             style={{ borderRadius: 12, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
         >
-            <Table columns={columns} dataSource={data} pagination={{ pageSize: 5 }} />
+            <Table
+                columns={columns}
+                dataSource={data}
+                pagination={{ pageSize: 5 }}
+                rowKey="key"
+            />
 
             <APMasterForm
                 open={formState.open}
                 mode={formState.mode}
-                initialValues={formState.record}
+                initialValues={formState.record ?? {}}
                 onCancel={() => setFormState({ ...formState, open: false })}
                 onSubmit={handleSubmit}
             />

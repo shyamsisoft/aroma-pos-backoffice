@@ -1,186 +1,111 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Space, Row, Col, Checkbox, Card, Collapse } from "antd";
+import { Form, Input, Button, Space, Row, Col, Checkbox, Card, Collapse, Select } from "antd";
+import type Fieldschema from "../types/Fieldschema";
 
-export interface APFormSectionValues {
-    key?: string;
-    created?: string;
-    createdDate?: string;
-    completedDate?: string;
-    status?: string;
-    remarks?: string;
-    // Additional Options
-    createdDate1?: string;
-    createdDate2?: string;
-    createdDate3?: string;
-    optionPaid?: boolean;
-    optionNotify?: boolean;
-    optionEmail?: boolean;
-    optionOther?: boolean;
+export interface DynamicFormValues {
+    [field: string]: any;
 }
 
-interface APFormSectionProps {
-    APFormSection?: APFormSectionValues;
+interface DynamicFormProps {
+    schema: Fieldschema[];
+    data?: DynamicFormValues;
     mode: "view" | "edit" | "add";
-    onSave: (values: APFormSectionValues) => void;
+    onSave: (values: DynamicFormValues) => void;
     onCancelEdit: () => void;
 }
 
 const { Panel } = Collapse;
 
-const APFormSection: React.FC<APFormSectionProps> = ({
-    APFormSection,
-    onSave,
-}) => {
+const DynamicForm: React.FC<DynamicFormProps> = ({ schema, data, mode, onSave, onCancelEdit }) => {
     const [form] = Form.useForm();
-
-    const [isEditingStatus, setIsEditingStatus] = useState(false);
-    const [isEditingAdditional, setIsEditingAdditional] = useState(false);
+    const [isEditing, setIsEditing] = useState(mode === "edit" || mode === "add");
 
     useEffect(() => {
-        if (APFormSection) {
-            form.setFieldsValue(APFormSection);
+        if (data) {
+            form.setFieldsValue(data);
         } else {
-            form.resetFields();
+            const initial: DynamicFormValues = {};
+            schema.forEach((f) => (initial[f.fieldName] = f.dataField ?? ""));
+            form.setFieldsValue(initial);
         }
-    }, [APFormSection, form]);
+    }, [data, schema, form]);
 
-    const saveSection = async () => {
-        const values = await form.validateFields();
-        onSave({ ...APFormSection, ...values });
-        setIsEditingStatus(false);
-        setIsEditingAdditional(false);
+    const save = async () => {
+        try {
+            const values = await form.validateFields();
+            onSave(values);
+            setIsEditing(false);
+        } catch (err) {
+            console.log("Validation failed:", err);
+        }
+    };
+
+    const renderField = (field: Fieldschema) => {
+        const rules =
+            field.validations?.map((rule) => {
+                if (rule === "required") return { required: true, message: `${field.label} is required` };
+                if (rule.startsWith("min:")) return { min: parseInt(rule.split(":")[1]), message: `${field.label} min value` };
+                return {};
+            }) || [];
+
+        switch (field.type) {
+            case "string":
+                return (
+                    <Form.Item key={field.fieldName} label={field.label} name={field.fieldName} rules={rules}>
+                        <Input disabled={!isEditing} placeholder={`Enter ${field.label}`} />
+                    </Form.Item>
+                );
+            case "textarea":
+                return (
+                    <Form.Item key={field.fieldName} label={field.label} name={field.fieldName} rules={rules}>
+                        <Input.TextArea disabled={!isEditing} rows={4} placeholder={`Enter ${field.label}`} />
+                    </Form.Item>
+                );
+            case "boolean":
+                return (
+                    <Form.Item key={field.fieldName} name={field.fieldName} valuePropName="checked">
+                        <Checkbox disabled={!isEditing}>{field.label}</Checkbox>
+                    </Form.Item>
+                );
+            // case "select":
+            //     return (
+            //         <Form.Item key={field.fieldName} label={field.label} name={field.fieldName} rules={rules}>
+            //             <Select disabled={!isEditing} placeholder={`Select ${field.label}`}>
+            //                 {field.options?.map((opt) => (
+            //                     <Select.Option key={opt} value={opt}>
+            //                         {opt}
+            //                     </Select.Option>
+            //                 ))}
+            //             </Select>
+            //         </Form.Item>
+            //     );
+            default:
+                return null;
+        }
     };
 
     return (
-        <Card
-            style={{
-                background: "#fff",
-                borderRadius: 10,
-                padding: 0,
-                overflow: "hidden",
-                boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
-            }}
-        >
+        <Card style={{ background: "#fff", borderRadius: 10, padding: 0, overflow: "hidden", boxShadow: "0 2px 10px rgba(0,0,0,0.08)" }}>
             <Collapse defaultActiveKey={["1"]}>
-                <Panel header="Additional Options" key="1">
+                <Panel header="Details" key="1">
                     <Card style={{ padding: 20, borderRadius: 10 }}>
                         <Form form={form} layout="vertical">
                             <Row gutter={16}>
-                                <Col span={12}>
-                                    <Form.Item label="Created" name="created">
-                                        <Input disabled={!isEditingAdditional} />
-                                    </Form.Item>
-
-                                    <Form.Item label="Created Date 1" name="createdDate1">
-                                        <Input disabled={!isEditingAdditional} />
-                                    </Form.Item>
-
-                                    <Form.Item label="Created Date 2" name="createdDate2">
-                                        <Input disabled={!isEditingAdditional} />
-                                    </Form.Item>
-
-                                    <Form.Item label="Created Date 3" name="createdDate3">
-                                        <Input disabled={!isEditingAdditional} />
-                                    </Form.Item>
-                                </Col>
-
-                                <Col span={12}>
-                                    <div style={{ marginTop: 6 }}>
-                                        <Checkbox name="optionPaid" disabled={!isEditingAdditional}>
-                                            Mark invoice as paid
-                                        </Checkbox>
-                                    </div>
-
-                                    <div style={{ marginTop: 15 }}>
-                                        <Checkbox name="optionNotify" disabled={!isEditingAdditional}>
-                                            Notify me when invoice is received
-                                        </Checkbox>
-                                    </div>
-
-                                    <div style={{ marginTop: 15 }}>
-                                        <Checkbox name="optionEmail" disabled={!isEditingAdditional}>
-                                            Send email notification to supplier
-                                        </Checkbox>
-                                    </div>
-
-                                    <div style={{ marginTop: 15 }}>
-                                        <Checkbox name="optionOther" disabled={!isEditingAdditional}>
-                                            Another checkbox
-                                        </Checkbox>
-                                    </div>
-                                </Col>
-                            </Row>
-
-                            <Form.Item style={{ marginTop: 10 }}>
-                                {isEditingAdditional ? (
-                                    <Space>
-                                        <Button type="primary" onClick={saveSection}>
-                                            Save
-                                        </Button>
-                                        <Button onClick={() => setIsEditingAdditional(false)}>
-                                            Cancel
-                                        </Button>
-                                    </Space>
-                                ) : (
-                                    <Button
-                                        type="primary"
-                                        onClick={() => setIsEditingAdditional(true)}
-                                    >
-                                        Edit
-                                    </Button>
-                                )}
-                            </Form.Item>
-                        </Form>
-                    </Card>
-                </Panel>
-
-                <Panel header="Status Details" key="2">
-                    <Card style={{ padding: 20, borderRadius: 10 }}>
-                        <Form form={form} layout="vertical">
-                            <Row gutter={16}>
-                                <Col span={12}>
-                                    <Form.Item label="Created" name="created">
-                                        <Input disabled={!isEditingStatus} />
-                                    </Form.Item>
-                                </Col>
-
-                                <Col span={12}>
-                                    <Form.Item label="Created Date" name="createdDate">
-                                        <Input disabled={!isEditingStatus} />
-                                    </Form.Item>
-                                </Col>
-
-                                <Col span={12}>
-                                    <Form.Item label="Completed Date" name="completedDate">
-                                        <Input disabled={!isEditingStatus} />
-                                    </Form.Item>
-                                </Col>
-
-                                <Col span={12}>
-                                    <Form.Item label="Status" name="status">
-                                        <Input disabled={!isEditingStatus} />
-                                    </Form.Item>
-                                </Col>
-
                                 <Col span={24}>
-                                    <Form.Item label="Remarks" name="remarks">
-                                        <Input.TextArea disabled={!isEditingStatus} rows={4} />
-                                    </Form.Item>
+                                    {schema.map((field) => renderField(field))}
                                 </Col>
                             </Row>
 
-                            <Form.Item style={{ marginTop: 10 }}>
-                                {isEditingStatus ? (
+                            <Form.Item>
+                                {isEditing ? (
                                     <Space>
-                                        <Button type="primary" onClick={saveSection}>
+                                        <Button type="primary" onClick={save}>
                                             Save
                                         </Button>
-                                        <Button onClick={() => setIsEditingStatus(false)}>
-                                            Cancel
-                                        </Button>
+                                        <Button onClick={() => setIsEditing(false)}>Cancel</Button>
                                     </Space>
                                 ) : (
-                                    <Button type="primary" onClick={() => setIsEditingStatus(true)}>
+                                    <Button type="primary" onClick={() => setIsEditing(true)}>
                                         Edit
                                     </Button>
                                 )}
@@ -193,4 +118,4 @@ const APFormSection: React.FC<APFormSectionProps> = ({
     );
 };
 
-export default APFormSection;
+export default DynamicForm;

@@ -1,130 +1,150 @@
-import React, { useState } from "react";
-import { Card, Button, Table, Row, Col, Collapse } from "antd";
+import React, { useEffect, useState } from "react";
+import { Card, Button, Table, Row, Col, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
-import ItemForm, { type ItemFormValues } from "../components/ItemForm";
-import APFormSection, { type APFormSectionValues } from "../components/APFormSection";
+import ItemForm, { type ProductFormValues } from "../components/ItemForm";
+import DynamicForm, { type DynamicFormValues } from "../components/APFormSection";
+import type ItemSchema from "../types/ItemSchema";
+import type FieldSchema from "../types/Fieldschema";
 
-const { Panel } = Collapse;
-
-interface Item {
-    key: string;
+interface Product {
+    id: string;
     name: string;
+    category: string;
+    unitPrice: number;
+}
+
+interface productDisplay {
+    id: string;
+    name: string;
+    category: string;
+    unitPrice: number;
     description: string;
 }
 
 const ItemMasterPage: React.FC = () => {
-    const [data, setData] = useState<Item[]>([
-        { key: "1", name: "Item A", description: "First item" },
-        { key: "2", name: "Item B", description: "Second item" },
-        { key: "3", name: "Item C", description: "Third item" },
-        { key: "4", name: "Item D", description: "Fourth item" },
-        { key: "5", name: "Item E", description: "Fifth item" },
-        { key: "6", name: "Item F", description: "Sixth item" },
-        { key: "7", name: "Item G", description: "Seventh item" },
-        { key: "8", name: "Item H", description: "Eighth item" },
-        { key: "9", name: "Item I", description: "Ninth item" },
-        { key: "10", name: "Item J", description: "Tenth item" },
-    ]);
-
-    const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+    const [products, setProducts] = useState<Product[]>([]);
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+    const [itemSchema, setItemSchema] = useState<ItemSchema[]>([]);
+    const [apSchema, setAPSchema] = useState<FieldSchema[]>([]);
     const [formMode, setFormMode] = useState<"view" | "edit" | "add">("view");
+    const [displayProducts, setDisplayProducts] = useState<productDisplay[]>([]);
 
-    const columns: ColumnsType<Item> = [
+    // Fetch products and schemas
+    useEffect(() => {
+        fetch("public/data/products.json")
+            .then((res) => res.json())
+            .then((json) => setProducts(json))
+            .catch((err) => console.error("Error loading products.json:", err));
+
+        fetch("public/data/status-details.json")
+            .then((res) => res.json())
+            .then((json) => setAPSchema(json))
+            .catch((err) => console.error("Error loading status-details.json:", err));
+
+        fetch("public/data/prod.json")
+            .then((res) => res.json())
+            .then((json) => setDisplayProducts(json))
+            .catch((err) => console.error("Error loading prod.json:", err));
+
+        // Optional: define ItemForm schema dynamically
+        const productFormSchema: ItemSchema[] = [
+            { fieldname: "name", label: "Name", type: "string", dataField: "", validations: ["required"] },
+            { fieldname: "category", label: "Category", type: "string", dataField: "", validations: ["required"] },
+            { fieldname: "unitPrice", label: "Unit Price", type: "number", dataField: 0, validations: ["required", "min:0"] },
+        ];
+        setItemSchema(productFormSchema);
+    }, []);
+
+    const columns: ColumnsType<Product> = [
         { title: "Name", dataIndex: "name", key: "name", width: "40%" },
-        { title: "Description", dataIndex: "description", key: "description" },
+        { title: "Category", dataIndex: "category", key: "category" },
+        { title: "Unit Price", dataIndex: "unitPrice", key: "unitPrice" },
     ];
 
-    const handleRowClick = (record: Item) => {
-        setSelectedItem(record);
+    const handleRowClick = (record: Product) => {
+        setSelectedProduct(record);
         setFormMode("view");
     };
 
-    const handleSaveForm = (values: ItemFormValues) => {
+    const handleSaveForm = (values: ProductFormValues) => {
         if (formMode === "add") {
-            const newItem: Item = {
-                key: (data.length + 1).toString(),
+            const newProduct: Product = {
+                id: "P" + (products.length + 1).toString().padStart(3, "0"),
                 name: values.name,
-                description: values.description,
+                category: values.category!,
+                unitPrice: values.unitPrice!,
             };
-            setData([...data, newItem]);
-            setSelectedItem(newItem);
-        } else if (formMode === "edit" && values.key) {
-            const updated = data.map((item) =>
-                item.key === values.key ? { ...item, ...values } : item
+            setProducts([...products, newProduct]);
+            setSelectedProduct(newProduct);
+            message.success("Product added successfully!");
+        } else if (formMode === "edit" && selectedProduct) {
+            const updated = products.map((p) =>
+                p.id === selectedProduct.id ? { ...p, ...values } : p
             );
-            setData(updated);
-            setSelectedItem(values as Item);
+            setProducts(updated);
+            setSelectedProduct({ ...selectedProduct, ...values });
+            message.success("Product updated successfully!");
         }
         setFormMode("view");
     };
 
-    const handleSaveAPForm = (values: APFormSectionValues) => {
-        console.log("AP Form Section Saved:", values);
-    };
-
     const handleAddNew = () => {
-        setSelectedItem(null);
+        setSelectedProduct(null);
         setFormMode("add");
     };
 
     const handleCancelEdit = () => {
-        setSelectedItem(null);
+        setSelectedProduct(null);
         setFormMode("view");
+    };
+
+    const handleSaveAPForm = (values: DynamicFormValues) => {
+        console.log("AP Section Saved:", values);
+        message.success("AP section saved!");
     };
 
     return (
         <Card
-            title="Item Master"
+            title="Product Master"
             extra={
                 <Button type="primary" icon={<PlusOutlined />} onClick={handleAddNew}>
                     Add New
                 </Button>
             }
-            style={{
-                height: "92vh",
-                display: "flex",
-                flexDirection: "column",
-            }}
+            style={{ height: "92vh", display: "flex", flexDirection: "column" }}
         >
             <Row gutter={16} style={{ flex: 1, overflow: "hidden" }}>
-
-                {/* LEFT PANEL (FIXED HEIGHT, NO PAGE SCROLL) */}
+                {/* LEFT PANEL */}
                 <Col
-                    span={selectedItem || formMode === "add" ? 5 : 24}
+                    span={selectedProduct || formMode === "add" ? 6 : 24}
                     style={{
                         height: "100%",
                         overflow: "hidden",
-                        borderRight: selectedItem ? "1px solid #f0f0f0" : undefined,
+                        borderRight: selectedProduct ? "1px solid #f0f0f0" : undefined,
                         transition: "all 0.3s ease",
                     }}
                 >
                     <Table
-                        columns={selectedItem ? [{ title: "Name", dataIndex: "name" }] : columns}
-                        dataSource={data}
+                        columns={columns}
+                        dataSource={displayProducts}
                         pagination={false}
-                        rowKey="key"
+                        rowKey="id"
                         onRow={(record) => ({
                             onClick: () => handleRowClick(record),
                             style: {
                                 cursor: "pointer",
-                                background: selectedItem?.key === record.key ? "#f0f7ff" : undefined,
+                                background:
+                                    selectedProduct?.id === record.id ? "#f0f7ff" : undefined,
                             },
                         })}
-                        scroll={{ y: "calc(92vh - 150px)" }} // table scrolls internally
+                        scroll={{ y: "calc(92vh - 150px)" }}
                     />
                 </Col>
 
-                {/* RIGHT PANEL — SCROLLABLE */}
-                {(selectedItem || formMode === "add") && (
-                    <Col
-                        span={19}
-                        style={{
-                            height: "100%",
-                            overflow: "hidden",
-                            paddingLeft: 16,
-                        }}
-                    >
+                {/* RIGHT PANEL */}
+                {(selectedProduct || formMode === "add") && (
+                    <Col span={18} style={{ height: "100%", overflow: "hidden", paddingLeft: 16 }}>
                         <div
                             style={{
                                 height: "calc(92vh - 150px)",
@@ -132,26 +152,27 @@ const ItemMasterPage: React.FC = () => {
                                 paddingRight: 12,
                             }}
                         >
-                            <Collapse defaultActiveKey={["1"]} accordion>
+                            {/* Product Form */}
+                            {itemSchema.length > 0 && (
+                                <ItemForm
+                                    item={selectedProduct || undefined}
+                                    mode={formMode}
+                                    onSave={handleSaveForm}
+                                    onCancelEdit={handleCancelEdit}
+                                    schema={itemSchema}
+                                />
+                            )}
 
-                                <Panel header="Item Details" key="1">
-                                    <ItemForm
-                                        item={selectedItem || undefined}
-                                        mode={formMode}
-                                        onSave={handleSaveForm}
-                                        onCancelEdit={handleCancelEdit}
-                                    />
-                                </Panel>
-                                <Panel header="Additional Options" key="2">
-                                    <APFormSection
-                                        APFormSection={undefined}
-                                        mode={"view"}
-                                        onSave={handleSaveAPForm}
-                                        onCancelEdit={() => { }}
-                                    />
-                                </Panel>
-
-                            </Collapse>
+                            {/* AP Section */}
+                            {apSchema.length > 0 && (
+                                <DynamicForm
+                                    data={selectedProduct || undefined}
+                                    mode={formMode}
+                                    onSave={handleSaveAPForm}
+                                    onCancelEdit={() => { }}
+                                    schema={apSchema}
+                                />
+                            )}
                         </div>
                     </Col>
                 )}
