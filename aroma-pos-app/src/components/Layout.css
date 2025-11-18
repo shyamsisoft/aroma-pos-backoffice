@@ -1,5 +1,5 @@
-/* SIDEBAR */
-.sidebar {
+/* sider */
+.sider {
     background: linear-gradient(
         to bottom,
         #83bbe5 0%,      
@@ -18,28 +18,28 @@
 }
 
 /* MENU BASE */
-.sidebar .ant-menu {
+.sider .ant-menu {
     background: transparent !important;
     font-size: 13px !important;
 }
 
 /* MAIN ITEMS */
-.sidebar .ant-menu-item,
-.sidebar .ant-menu-submenu-title {
+.sider .ant-menu-item,
+.sider .ant-menu-submenu-title {
     color: #ffffff !important;
     padding: 2px 0 2px 4px !important;
     border-radius: 0 !important;
 }
 
 /* MAIN MENU HOVER */
-.sidebar .ant-menu-item:hover,
-.sidebar .ant-menu-submenu-title:hover {
+.sider .ant-menu-item:hover,
+.sider .ant-menu-submenu-title:hover {
     background: rgba(255, 255, 255, 0.15) !important;
 }
 
 /* REMOVE SELECTED (TOP LEVEL) */
-.sidebar .ant-menu-item-selected,
-.sidebar .ant-menu-submenu-title-selected {
+.sider .ant-menu-item-selected,
+.sider .ant-menu-submenu-title-selected {
     background: transparent !important;
     color: #ffffff !important;
     font-weight: normal !important;
@@ -47,20 +47,20 @@
 }
 
 /* REMOVE LEFT HIGHLIGHT BAR */
-.sidebar .ant-menu-item::after,
-.sidebar .ant-menu-submenu-title::after {
+.sider .ant-menu-item::after,
+.sider .ant-menu-submenu-title::after {
     display: none !important;
 }
 
 /* ---------- SUBMENU RED BACKGROUND WHEN OPEN ---------- */
-.sidebar .ant-menu-submenu-open > .ant-menu-sub {
+.sider .ant-menu-submenu-open > .ant-menu-sub {
     background: #3c6883 !important;   /* RED */
     padding: 0 !important;
     margin: 0 !important;
 }
 
 /* SUBMENU ITEMS */
-.sidebar .ant-menu-sub .ant-menu-item {
+.sider .ant-menu-sub .ant-menu-item {
     padding-left: 34px !important;
     height: 32px !important;
     line-height: 32px !important;
@@ -70,19 +70,19 @@
 }
 
 /* ---------- REMOVE SUBMENU HOVER ---------- */
-.sidebar .ant-menu-sub .ant-menu-item:hover {
+.sider .ant-menu-sub .ant-menu-item:hover {
     background: transparent !important;   /* no hover */
 }
 
 /* SUBMENU SELECTED ITEM */
-.sidebar .ant-menu-sub .ant-menu-item-selected {
+.sider .ant-menu-sub .ant-menu-item-selected {
     background: transparent !important;
     color: #ffffff !important;
     font-weight: 600 !important;
 }
 
 /* "|" INDICATOR */
-.sidebar .ant-menu-sub .ant-menu-item-selected::before {
+.sider .ant-menu-sub .ant-menu-item-selected::before {
     content: "|";
     position: absolute;
     left: 18px;

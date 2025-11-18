@@ -25,7 +25,7 @@ const MasterLayout: React.FC<MasterLayoutProps> = ({ children }) => {
                 trigger={null}
                 collapsedWidth={60}   // icon-only width
                 breakpoint="lg"
-                className="sidebar"
+                className="sider"
                 style={{ position: "relative" }}
             >
                 {/* HEADER */}
@@ -74,6 +74,7 @@ const MasterLayout: React.FC<MasterLayoutProps> = ({ children }) => {
                         position: "absolute",
                         bottom: 0,
                         width: "100%",
+                     
                         padding: collapsed ? "12px 0" : "16px 0",
                         textAlign: "center",
                         background: collapsed ? "#001529" : "#000c17",
@@ -85,7 +86,10 @@ const MasterLayout: React.FC<MasterLayoutProps> = ({ children }) => {
                     <Avatar
                         size={collapsed ? 32 : 48}
                         icon={<UserOutlined />}
-                        style={{ marginBottom: collapsed ? 0 : 8 }}
+                        style={{ marginBottom: collapsed ? 0 : 8 ,
+                            marginLeft: collapsed ?-8 : 0,
+                            marginTop: collapsed ? 5 : 0
+                        }}
                     />
 
                     {/* Text hidden when collapsed */}
