@@ -23,11 +23,11 @@
     font-size: 13px !important;
 }
 
-/* MAIN ITEMS */
+/* ✅ MODIFIED: MAIN ITEMS - Reducing vertical padding for a smaller height */
 .sider .ant-menu-item,
 .sider .ant-menu-submenu-title {
     color: #ffffff !important;
-    padding: 2px 0 2px 4px !important;
+    padding: 1px 0 1px 4px !important; /* Reduced from 2px to 1px padding */
     border-radius: 0 !important;
 }
 
@@ -37,14 +37,14 @@
     background: rgba(255, 255, 255, 0.15) !important;
 }
 
-/* ✅ NEW/MODIFIED RULE: BACKGROUND COLOR WHEN PARENT SUBMENU IS EXPANDED/OPEN */
+/* BACKGROUND COLOR WHEN PARENT SUBMENU IS EXPANDED/OPEN */
 .sider .ant-menu-submenu-open > .ant-menu-submenu-title {
-    background: #ffd633 !important; /* Darker blue background when open/tapped */
+    background: transparent !important;
     color: #ffffff !important;
     font-weight: normal !important;
 }
 
-/* --- SELECTION RULES (Resetting to original 'transparent' logic to prevent confusion) --- */
+/* --- SELECTION RULES --- */
 
 /* REMOVE SELECTED (TOP LEVEL) */
 .sider .ant-menu-item-selected,
@@ -62,18 +62,18 @@
     display: none !important;
 }
 
-/* ---------- SUBMENU ITEMS CONTAINER (Must be transparent for gradient to show) ---------- */
+/* ---------- SUBMENU ITEMS CONTAINER ---------- */
 .sider .ant-menu-submenu-open > .ant-menu-sub {
     background: transparent !important;
     padding: 0 !important;
     margin: 0 !important;
 }
 
-/* SUBMENU ITEMS */
+/* ✅ MODIFIED: SUBMENU ITEMS - Reducing height and line-height */
 .sider .ant-menu-sub .ant-menu-item {
     padding-left: 34px !important;
-    height: 32px !important;
-    line-height: 32px !important;
+    height: 28px !important;    /* Reduced from 32px to 28px */
+    line-height: 28px !important; /* Reduced from 32px to 28px */
     margin: 0 !important;
     border-radius: 0 !important;
     color: #ffffff !important;
@@ -81,13 +81,13 @@
 
 /* ---------- REMOVE SUBMENU HOVER ---------- */
 .sider .ant-menu-sub .ant-menu-item:hover {
-    background: transparent !important;
+    background: transparent ;
 }
 
 /* SUBMENU SELECTED ITEM (Child item selection remains transparent background) */
 .sider .ant-menu-sub .ant-menu-item-selected {
-    background: transparent !important;
-    color: #ffffff !important;
+    background: #e2bf36 !important;
+    color: #807e7e !important;
     font-weight: 600 !important;
 }
 
