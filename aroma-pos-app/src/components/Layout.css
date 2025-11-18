@@ -2,9 +2,9 @@
 .sider {
     background: linear-gradient(
         to bottom,
-        #83bbe5 0%,      
-        #5ea0c6 40%,     
-        #2c8bc7 100%     
+        #1d7bcc 0%,      
+        #0751a0 40%,     
+        #033b74 100%     
     );
     color: #ffffff;
     overflow-y: auto;
@@ -31,20 +31,30 @@
     border-radius: 0 !important;
 }
 
-/* MAIN MENU HOVER */
+/* MAIN MENU HOVER (for all main items) */
 .sider .ant-menu-item:hover,
 .sider .ant-menu-submenu-title:hover {
     background: rgba(255, 255, 255, 0.15) !important;
 }
 
+/* ✅ NEW/MODIFIED RULE: BACKGROUND COLOR WHEN PARENT SUBMENU IS EXPANDED/OPEN */
+.sider .ant-menu-submenu-open > .ant-menu-submenu-title {
+    background: #ffd633 !important; /* Darker blue background when open/tapped */
+    color: #ffffff !important;
+    font-weight: normal !important;
+}
+
+/* --- SELECTION RULES (Resetting to original 'transparent' logic to prevent confusion) --- */
+
 /* REMOVE SELECTED (TOP LEVEL) */
 .sider .ant-menu-item-selected,
 .sider .ant-menu-submenu-title-selected {
-    background: transparent !important;
+    background: transparent !important; 
     color: #ffffff !important;
     font-weight: normal !important;
     box-shadow: none !important;
 }
+
 
 /* REMOVE LEFT HIGHLIGHT BAR */
 .sider .ant-menu-item::after,
@@ -52,9 +62,9 @@
     display: none !important;
 }
 
-/* ---------- SUBMENU RED BACKGROUND WHEN OPEN ---------- */
+/* ---------- SUBMENU ITEMS CONTAINER (Must be transparent for gradient to show) ---------- */
 .sider .ant-menu-submenu-open > .ant-menu-sub {
-    background: #3c6883 !important;   /* RED */
+    background: transparent !important;
     padding: 0 !important;
     margin: 0 !important;
 }
@@ -71,10 +81,10 @@
 
 /* ---------- REMOVE SUBMENU HOVER ---------- */
 .sider .ant-menu-sub .ant-menu-item:hover {
-    background: transparent !important;   /* no hover */
+    background: transparent !important;
 }
 
-/* SUBMENU SELECTED ITEM */
+/* SUBMENU SELECTED ITEM (Child item selection remains transparent background) */
 .sider .ant-menu-sub .ant-menu-item-selected {
     background: transparent !important;
     color: #ffffff !important;
