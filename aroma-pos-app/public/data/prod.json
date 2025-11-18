@@ -1,0 +1,37 @@
+[
+    {
+        "id": "P001",
+        "name": "Coconut Oil 1L",
+        "category": "Food",
+        "unitPrice": 950,
+        "description": "Pure cold-pressed coconut oil, ideal for cooking and skincare."
+    },
+    {
+        "id": "P002",
+        "name": "Coconut Milk Powder 500g",
+        "category": "Food",
+        "unitPrice": 450,
+        "description": "Rich and creamy coconut milk powder, perfect for desserts and curries."
+    },
+    {
+        "id": "P003",
+        "name": "Desiccated Coconut 1kg",
+        "category": "Food",
+        "unitPrice": 1200,
+        "description": "Finely shredded desiccated coconut for baking and confectionery."
+    },
+    {
+        "id": "P004",
+        "name": "Coconut Cream 200ml",
+        "category": "Food",
+        "unitPrice": 350,
+        "description": "Thick and creamy coconut cream, ideal for sauces and beverages."
+    },
+    {
+        "id": "P005",
+        "name": "Organic Coconut Vinegar 750ml",
+        "category": "Beverage",
+        "unitPrice": 600,
+        "description": "Organic coconut vinegar, naturally fermented for health benefits."
+    }
+]

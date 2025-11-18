@@ -1,0 +1,47 @@
+[
+    {
+        "fieldName": "statusId",
+        "label": "Status ID",
+        "type": "string",
+        "dataField": "",
+        "validations": [
+            "required"
+        ]
+    },
+    {
+        "fieldName": "saleStatus",
+        "label": "Sale Status",
+        "type": "select",
+        "options": [
+            "Pending",
+            "Completed",
+            "Returned",
+            "Cancelled"
+        ],
+        "validations": [
+            "required"
+        ]
+    },
+    {
+        "fieldName": "customerName",
+        "label": "Customer Name",
+        "type": "string",
+        "validations": [
+            "required"
+        ]
+    },
+    {
+        "fieldName": "sellerName",
+        "label": "Seller Name",
+        "type": "string",
+        "validations": [
+            "required"
+        ]
+    },
+    {
+        "fieldName": "notes",
+        "label": "Notes",
+        "type": "textarea",
+        "validations": []
+    }
+]
