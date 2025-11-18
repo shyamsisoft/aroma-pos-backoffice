@@ -74,32 +74,48 @@ const MasterLayout: React.FC<MasterLayoutProps> = ({ children }) => {
                         position: "absolute",
                         bottom: 0,
                         width: "100%",
-                     
-                        padding: collapsed ? "12px 0" : "16px 0",
+                        padding: collapsed ? "6px 0" : "8px 0", // reduced padding
                         textAlign: "center",
-                        background: collapsed ? "#001529" : "#000c17",
-                        color: "white",
                         transition: "all 0.3s ease",
+                        display: "flex",
+                        justifyContent: "center",
                     }}
                 >
-                    {/* Avatar always visible */}
-                    <Avatar
-                        size={collapsed ? 32 : 48}
-                        icon={<UserOutlined />}
-                        style={{ marginBottom: collapsed ? 0 : 8 ,
-                            marginLeft: collapsed ?-8 : 0,
-                            marginTop: collapsed ? 5 : 0
+                    <div
+                        style={{
+                            width: "95%",
+                            background: "rgba(255, 255, 255, 0.1)", // semi-transparent glass effect
+                            backdropFilter: "blur(8px)",            // glass blur
+                            padding: "6px 10px",                     // reduced padding
+                            borderRadius: "12px",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            border: "1px solid rgba(255, 255, 255, 0.2)", // subtle border
                         }}
-                    />
+                    >
+                        {/* Avatar always visible */}
+                        <Avatar
+                            size={collapsed ? 32 : 48}
+                            icon={<UserOutlined />}
+                            style={{
+                                marginBottom: collapsed ? 0 : 6,  // reduce spacing below avatar
+                                marginTop: collapsed ? 3 : 0,     // reduce top margin
+                            }}
+                        />
 
-                    {/* Text hidden when collapsed */}
-                    {!collapsed && (
-                        <div>
-                            <div style={{ fontWeight: "bold" }}>John Doe</div>
-                            <div style={{ fontSize: 12 }}>Admin</div>
-                        </div>
-                    )}
+                        {/* Text hidden when collapsed */}
+                        {!collapsed && (
+                            <div style={{ textAlign: "center", color: "white" }}>
+                                <div style={{ fontWeight: "bold" }}>John Doe</div>
+                                <div style={{ fontSize: 12 }}>Admin</div>
+                            </div>
+                        )}
+                    </div>
                 </div>
+
+
+
             </Sider>
 
 
