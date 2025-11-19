@@ -1,0 +1,132 @@
+{
+    "_id": {
+        "$oid": "68fa3260353d3b8e127e0133"
+    },
+    "clientId": {
+        "$oid": "68f6b14132d084c58e90c451"
+    },
+    "name": "Vue Seminar",
+    "formSchema": [
+        {
+            "name": "title",
+            "label": "Title",
+            "type": "select",
+            "options": [
+                {
+                    "text": "Mr",
+                    "value": {
+                        "$numberInt": "1"
+                    }
+                },
+                {
+                    "text": "Mrs",
+                    "value": {
+                        "$numberInt": "2"
+                    }
+                }
+            ],
+            "placeholder": "",
+            "validations": {
+                "required": {
+                    "value": false,
+                    "message": "This field is required"
+                }
+            }
+        },
+        {
+            "name": "firstName",
+            "label": "First Name",
+            "type": "text",
+            "options": [],
+            "placeholder": "",
+            "validations": {
+                "required": {
+                    "value": false,
+                    "message": "This field is required"
+                },
+                "minLength": {
+                    "value": {
+                        "$numberInt": "5"
+                    },
+                    "message": "Minimum length is 5"
+                },
+                "maxLength": {
+                    "value": {
+                        "$numberInt": "100"
+                    },
+                    "message": "Maximum length is 100"
+                }
+            }
+        },
+        {
+            "name": "lastName",
+            "label": "Last Name",
+            "type": "text",
+            "options": [],
+            "placeholder": "",
+            "validations": {
+                "required": {
+                    "value": false,
+                    "message": "This field is required"
+                },
+                "minLength": {
+                    "value": {
+                        "$numberInt": "5"
+                    },
+                    "message": "Minimum length is 5"
+                },
+                "maxLength": {
+                    "value": {
+                        "$numberInt": "100"
+                    },
+                    "message": "Maximum length is 100"
+                }
+            }
+        },
+        {
+            "name": "age",
+            "label": "Age",
+            "type": "number",
+            "options": [],
+            "placeholder": "",
+            "validations": {
+                "required": {
+                    "value": false,
+                    "message": "This field is required"
+                },
+                "min": {
+                    "value": {
+                        "$numberInt": "5"
+                    },
+                    "message": "Minimum value is 5"
+                },
+                "max": {
+                    "value": {
+                        "$numberInt": "10"
+                    },
+                    "message": "Maximum value is 10"
+                }
+            }
+        },
+        {
+            "name": "email",
+            "label": "Email",
+            "type": "email",
+            "placeholder": "",
+            "validations": {
+                "required": {
+                    "value": false,
+                    "message": "This field is required"
+                }
+            }
+        }
+    ],
+    "createdAt": {
+        "$date": {
+            "$numberLong": "1761227360296"
+        }
+    },
+    "__v": {
+        "$numberInt": "0"
+    }
+}
