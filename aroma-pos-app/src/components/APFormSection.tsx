@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Space, Row, Col, Checkbox, Card, Collapse, Select } from "antd";
-import type Fieldschema from "../types/Fieldschema";
-
+import type Fieldschema from "../types/FieldSchema";
 export interface DynamicFormValues {
     [field: string]: any;
 }
