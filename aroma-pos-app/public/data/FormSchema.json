@@ -1,0 +1,46 @@
+{
+    "formTitle": "Employee Master",
+    "sections": [
+        {
+            "title": "Employment Details",
+            "fields": [
+                {
+                    "name": "department",
+                    "label": "Department",
+                    "type": "select",
+                    "options": [
+                        {
+                            "label": "HR",
+                            "value": "hr"
+                        },
+                        {
+                            "label": "Finance",
+                            "value": "finance"
+                        },
+                        {
+                            "label": "IT",
+                            "value": "it"
+                        },
+                        {
+                            "label": "Operations",
+                            "value": "operations"
+                        }
+                    ],
+                    "validations": {}
+                },
+                {
+                    "name": "isPermanent",
+                    "label": "Permanent Employee",
+                    "type": "checkbox",
+                    "defaultValue": false
+                },
+                {
+                    "name": "salary",
+                    "label": "Salary",
+                    "type": "number",
+                    "validations": {}
+                }
+            ]
+        }
+    ]
+}
