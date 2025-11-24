@@ -49,4 +49,30 @@ export interface EmployeeModel {
     department: string
     isPermanent: boolean
     salary: number
+    firstName: string
+    lastName: string
+    gender: string
+    email: string
+    phone: number
+    address: string
+    designation: string
+    joiningDate: Date
+    workShift: string
+    bankName: string
+    accountNumber: number
+    accountType: string
+}
+export interface ProductModel {
+    productName: string
+    category: string
+    sku: string
+    unitPrice: number
+    quantity: number
+    isActive: boolean
+    supplierName: string
+    supplierContact: number
+    deliveryDays: number
+    description: string
+    warranty: number
+    launchDate: Date
 }
