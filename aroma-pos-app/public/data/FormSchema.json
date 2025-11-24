@@ -1,44 +1,111 @@
 {
-    "formTitle": "Employee Master",
+    "formTitle": "Product Master",
     "sections": [
         {
-            "title": "Employment Details",
+            "title": "Basic Information",
             "fields": [
                 {
-                    "name": "department",
-                    "label": "Department",
+                    "name": "productName",
+                    "label": "Product Name",
+                    "type": "text",
+                    "placeholder": "Enter product name"
+                },
+                {
+                    "name": "category",
+                    "label": "Category",
                     "type": "select",
                     "options": [
                         {
-                            "label": "HR",
-                            "value": "hr"
+                            "label": "Electronics",
+                            "value": "electronics"
                         },
                         {
-                            "label": "Finance",
-                            "value": "finance"
+                            "label": "Clothing",
+                            "value": "clothing"
                         },
                         {
-                            "label": "IT",
-                            "value": "it"
+                            "label": "Groceries",
+                            "value": "groceries"
                         },
                         {
-                            "label": "Operations",
-                            "value": "operations"
+                            "label": "Furniture",
+                            "value": "furniture"
                         }
-                    ],
-                    "validations": {}
+                    ]
                 },
                 {
-                    "name": "isPermanent",
-                    "label": "Permanent Employee",
-                    "type": "checkbox",
-                    "defaultValue": false
-                },
+                    "name": "sku",
+                    "label": "SKU",
+                    "type": "text",
+                    "placeholder": "Enter SKU"
+                }
+            ]
+        },
+        {
+            "title": "Pricing & Stock",
+            "fields": [
                 {
-                    "name": "salary",
-                    "label": "Salary",
+                    "name": "unitPrice",
+                    "label": "Unit Price",
                     "type": "number",
-                    "validations": {}
+                    "placeholder": "Enter unit price"
+                },
+                {
+                    "name": "quantity",
+                    "label": "Quantity in Stock",
+                    "type": "number",
+                    "placeholder": "Enter stock quantity"
+                },
+                {
+                    "name": "isActive",
+                    "label": "Active Product",
+                    "type": "checkbox",
+                    "defaultValue": true
+                }
+            ]
+        },
+        {
+            "title": "Supplier Details",
+            "fields": [
+                {
+                    "name": "supplierName",
+                    "label": "Supplier Name",
+                    "type": "text",
+                    "placeholder": "Enter supplier name"
+                },
+                {
+                    "name": "supplierContact",
+                    "label": "Supplier Contact",
+                    "type": "text",
+                    "placeholder": "Enter supplier contact number"
+                },
+                {
+                    "name": "deliveryDays",
+                    "label": "Delivery Time (Days)",
+                    "type": "number",
+                    "placeholder": "Enter delivery days"
+                }
+            ]
+        },
+        {
+            "title": "Additional Information",
+            "fields": [
+                {
+                    "name": "description",
+                    "label": "Description",
+                    "type": "textarea",
+                    "placeholder": "Enter product description"
+                },
+                {
+                    "name": "warranty",
+                    "label": "Warranty (Months)",
+                    "type": "number",
+                    "placeholder": "Enter warranty period"
+                },
+                {
+                    "name": "launchDate",
+                    "label": "Launch Date",
+                    "type": "date"
                 }
             ]
         }
