@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Input, InputNumber, Button, Space, Card, Select, Radio, Checkbox, DatePicker, Collapse } from "antd";
-import type { FormSchema, FormFieldSchema, ProductModel } from "../types/FormFieldSchema";
 
+import type { FormSchema, FormFieldSchema, ProductModel } from "../types/FormFieldSchema";
 
 const { Panel } = Collapse;
 
@@ -12,19 +12,35 @@ export interface FormValues {
 export interface FormComponentProps {
     schema: FormSchema;
     values?: FormValues;
-    data?: ProductModel;
-    onSave: (values: FormValues) => void;
+    data?: ProductModel[];
+    dataId?: string;         // productName you want to load
+    mode: "view" | "edit" | "add";
+    onSave: (values: ProductModel) => void;
     onCancel: () => void;
+    onEdit: () => void;
+    onDelete: () => void;
+
 }
 
+const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel, onDelete, data, dataId, mode, onEdit }) => {
 
-const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel, data }) => {
     const [form] = Form.useForm();
+    const [selectedProduct, setSelectedProduct] = useState<ProductModel | null>(null);
+
+
+    useEffect(() => {
+        if (data && dataId) {
+            const found = data.find(p => p.productName === dataId);
+            setSelectedProduct(found || null);
+
+            if (found) {
+                form.setFieldsValue(found);   // LOAD VALUES INTO FORM
+            }
+        }
+    }, [data, dataId, form]);
 
 
     const renderField = (field: FormFieldSchema) => {
-        console.log(data);
-
         switch (field.type) {
             case "text":
                 return <Input placeholder={field.placeholder} />;
@@ -33,7 +49,6 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
                 return <Input.TextArea rows={3} placeholder={field.placeholder} />;
 
             case "number":
-
                 return <InputNumber style={{ width: "100%" }} />;
 
             case "email":
@@ -42,7 +57,7 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
             case "select":
                 return (
                     <Select placeholder={field.placeholder}>
-                        {field.options?.map((op) => (
+                        {field.options?.map(op => (
                             <Select.Option key={op.value} value={op.value}>
                                 {op.label}
                             </Select.Option>
@@ -53,7 +68,7 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
             case "radio":
                 return (
                     <Radio.Group>
-                        {field.options?.map((op) => (
+                        {field.options?.map(op => (
                             <Radio key={op.value} value={op.value}>
                                 {op.label}
                             </Radio>
@@ -72,15 +87,15 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
         }
     };
 
-
     return (
-        <Card
-            title={schema.formTitle}
-            style={{ borderRadius: 5, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
-        >
-            <Form layout="vertical" form={form} onFinish={onSave} initialValues={data}>
+        <Card title={schema.formTitle} style={{ borderRadius: 5 }}>
+            <Form
+                layout="vertical"
+                form={form}
+                onFinish={onSave}
+            >
                 <Collapse accordion>
-                    {schema.sections.map((section) => (
+                    {schema.sections.map(section => (
                         <Panel header={section.title} key={section.title}>
                             {section.fields.map(field => (
                                 <Form.Item
@@ -97,11 +112,27 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
                 </Collapse>
 
                 <Space style={{ marginTop: 16 }}>
-                    <Button type="primary" htmlType="submit">Save</Button>
-                    <Button onClick={onCancel}>Cancel</Button>
+                    {mode === "view" && (
+                        <>
+                            <Button type="primary" onClick={onEdit}>
+                                Edit
+                            </Button>
+                            <Button onClick={onCancel}>Cancel</Button>
+                        </>
+                    )}
+
+                    {(mode === "edit" || mode === "add") && (
+                        <>
+                            <Button type="primary" htmlType="submit">Save</Button>
+                            <Button onClick={onCancel}>Cancel</Button>
+                        </>
+                    )}
+
+                    {(mode != "add") && (
+                        <Button danger type="primary" style={{ marginLeft: 550 }} onClick={onDelete} >Delete Product</Button>
+                    )}
                 </Space>
             </Form>
-
         </Card>
     );
 };

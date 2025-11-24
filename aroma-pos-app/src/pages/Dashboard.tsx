@@ -3,90 +3,93 @@ import { Card, Button, Table, Row, Col, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 
-import ItemForm, { type ProductFormValues } from "../components/ItemForm";
-import DynamicForm, { type DynamicFormValues } from "../components/APFormSection";
-import { type FormSchema, type EmployeeModel } from "../types/FormFieldSchema";
+import { type FormSchema, type ProductModel } from "../types/FormFieldSchema";
 import FormComponent from "../components/FormComponent";
 
-interface Product {
-    id: string;
-    name: string;
-    category: string;
-    unitPrice: number;
-    description?: string;
-}
+
 
 const ItemMasterPage: React.FC = () => {
 
-    const [products, setProducts] = useState<Product[]>([]);
-    const [itemsSchema, setItemsSchema] = useState<any[][]>([]);
-    // const [statusSchema, setStatusSchema] = useState<any[]>([]);
     const [employeeSchema, setEmployeeSchema] = useState<FormSchema | null>(null);
-    const [formValues, setFormValues] = useState<EmployeeModel | undefined>()
-
-
-    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-    const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+    const [formValues, setFormValues] = useState<ProductModel[]>([])
     const [formMode, setFormMode] = useState<"view" | "edit" | "add">("view");
 
 
+    const [selectedProduct, setSelectedProduct] = useState<ProductModel | null>(null);
+    const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
+
+
+
     useEffect(() => {
-        fetch("/data/products.json")
+
+        fetch("/data/FormValues.json")
             .then(res => res.json())
-            .then((json: any[][]) => {
-                const mapped: Product[] = json.map((recordFields, index) => {
-                    const obj: any = {};
-                    recordFields.forEach(field => {
-                        obj[field.fieldname] = field.dataField;
-                    });
-                    return {
-                        id: "P" + (index + 1).toString().padStart(3, "0"),
-                        name: obj.name,
-                        category: obj.category,
-                        unitPrice: obj.unitPrice,
-                        description: obj.description
-                    };
-                });
-
-                setProducts(mapped);
-                setItemsSchema(json);
-            })
-            .catch(err => console.error("Error loading products:", err));
-
-        // fetch("/data/status-details.json")
-        //     .then(res => res.json())
-        //     .then(setStatusSchema)
-        //     .catch(err => console.error("Error loading status-details:", err));
+            .then((data) => { setFormValues(data) })
+            .catch(err => console.error("Error fetching products:", err));
 
         fetch("/data/FormSchema.json")
             .then(res => res.json())
             .then(res => setEmployeeSchema(res))
             .catch(err => console.error("Error loading EmployeeFormSchema:", err));
 
-        fetch("/data/FormValues.json")
-            .then(res => res.json())
-            .then(res => setFormValues(res))
-            .catch(err => console.error("Error loading Values:", err));
-
-
     }, []);
 
-
-    const baseColumns: ColumnsType<Product> = [
-        { title: "Name", dataIndex: "name", key: "name", width: "60%" },
+    const baseColumns: ColumnsType<ProductModel> = [
+        { title: "Name", dataIndex: "productName", key: "productName", width: "60%" },
         { title: "Category", dataIndex: "category", key: "category" },
-        { title: "Unit Price", dataIndex: "unitPrice", key: "unitPrice" }
+        { title: "Unit Price", dataIndex: "unitPrice", key: "unitPrice" },
+
+        {
+            title: "Actions",
+            key: "actions",
+            width: "120px",
+            render: (_, record, index) => (
+                <div style={{ display: "flex", gap: 8 }}>
+
+                    {/* EDIT BUTTON */}
+                    <Button
+                        type="primary"
+                        size="small"
+                        onClick={(e) => {
+                            e.stopPropagation(); // prevent row click
+                            handleRowClick(record, index);
+                            setFormMode("edit");
+                        }}
+                    >
+                        Edit
+                    </Button>
+
+                    {/* DELETE BUTTON */}
+                    <Button
+                        danger
+                        size="small"
+                        onClick={(e) => {
+                            e.stopPropagation(); // prevent row click
+                            setSelectedIndex(index);
+                            setSelectedProduct(record);
+                            handleDelete();
+                        }}
+                    >
+                        Delete
+                    </Button>
+
+                </div>
+            ),
+        },
     ];
+
 
     const columns =
         selectedProduct || formMode === "add"
             ? baseColumns.slice(0, 1) // shrink: only show name
             : baseColumns;
 
-    const handleRowClick = (record: Product, index: number) => {
+    const handleRowClick = (record: ProductModel, index: number) => {
         setSelectedProduct(record);
         setSelectedIndex(index);
         setFormMode("view");
+
     };
 
     const handleAddNew = () => {
@@ -95,44 +98,65 @@ const ItemMasterPage: React.FC = () => {
         setFormMode("add");
     };
 
-    const handleSaveProduct = (values: ProductFormValues) => {
+
+
+    const handleSaveProduct = (values: ProductModel) => {
+
         if (formMode === "add") {
-            const newProduct: Product = {
-                id: "P" + (products.length + 1).toString().padStart(3, "0"),
-                name: values.name,
+            const newformValues: ProductModel = {
+                //id: "P" + (products.length + 1).toString().padStart(3, "0"),
+                productName: values.productName,
                 category: values.category!,
+                sku: values.sku!,
                 unitPrice: values.unitPrice!,
-                description: values.description ?? ""
+                quantity: values.quantity!,
+                isActive: values.isActive!,
+                supplierName: values.supplierName!,
+                supplierContact: values.supplierContact!,
+                deliveryDays: values.deliveryDays!,
+                description: values.description!,
+                warranty: values.warranty!,
+                launchDate: values.launchDate!
             };
-            setProducts(prev => [...prev, newProduct]);
-            message.success("Product added!");
-            setSelectedProduct(newProduct);
+
+            setFormValues(prev => [...prev, newformValues]);
+            message.success("Product Added!");
+            setSelectedProduct(newformValues);
+
+            console.log("updated products");
+
+            console.log(newformValues);
+
         }
 
         if (formMode === "edit" && selectedProduct) {
-            const updated = products.map(p =>
-                p.id === selectedProduct.id ? { ...p, ...values } : p
+            const updated = formValues.map(p =>
+                p.productName === selectedProduct.productName ? { ...p, ...values } : p
             );
-            setProducts(updated);
-            message.success("Product updated!");
+            setFormValues(updated);
+            message.success("Product Updated!");
         }
 
         setFormMode("view");
     };
 
-    const handleSaveAP = (values: DynamicFormValues) => {
-        console.log("AP Saved:", values);
-        message.success("AP saved!");
+
+    const handleCancel = () => {
+        setFormMode("view");
+        setSelectedProduct(null);
+
+
+    }
+
+    const handleDelete = () => {
+        if (selectedIndex === null) return;
+
+        const updatedList = formValues!.filter((_, index) => index !== selectedIndex);
+
+        setFormValues(updatedList);
+        setSelectedIndex(null);
+        setSelectedProduct(null);
     };
-
-    const handleCancel = () => setFormMode("view");
-
-    const currentItemSchema =
-        formMode === "add"
-            ? []
-            : selectedIndex !== null
-                ? itemsSchema[selectedIndex]
-                : [];
 
 
     return (
@@ -143,25 +167,30 @@ const ItemMasterPage: React.FC = () => {
                     Add New
                 </Button>
             }
-            style={{ height: "92vh", display: "flex", flexDirection: "column" }}
+
         >
-            <Row gutter={16} style={{ flex: 1, overflow: "hidden" }}>
+            <Row gutter={16} style={{ flex: 1, minHeight: 0 }}>
                 {/* LEFT PANEL */}
                 <Col
                     span={selectedProduct || formMode === "add" ? 6 : 24}
                     style={{
-                        height: "100%",
-                        borderRight: "1px solid #eee",
-                        transition: "all 0.3s ease",
-                        overflow: "hidden",
+                        position: "sticky",
+                        top: 56, // height of Card header
+                        height: "calc(90vh - 56px)",
+                        alignSelf: "flex-start",
+                        borderRight: "1px solid #f0f0f0",
+                        background: "white",
+                        zIndex: 20,
+                        paddingRight: 8,
                         display: "flex",
-                        flexDirection: "column"
+                        flexDirection: "column",
+                        overflow: "hidden" // IMPORTANT: prevents column from scrolling
                     }}
                 >
-                    <div style={{ flex: 1, overflowY: "auto" }}>
+                    <div style={{ overflowY: "auto", flex: 1 }}>
                         <Table
                             columns={columns}
-                            dataSource={products}
+                            dataSource={formValues}
                             pagination={false}
                             rowKey="id"
                             onRow={(record, index) => ({
@@ -169,10 +198,16 @@ const ItemMasterPage: React.FC = () => {
                                 style: {
                                     cursor: "pointer",
                                     background:
-                                        selectedProduct?.id === record.id ? "#f0f7ff" : undefined
+                                        selectedProduct?.productName === record.productName ? "#f0f7ff" : undefined
                                 }
                             })}
+
+                            scroll={{
+                                x: "max-content",
+                            }}
+
                         />
+
                     </div>
                 </Col>
 
@@ -180,21 +215,32 @@ const ItemMasterPage: React.FC = () => {
                 {(selectedProduct || formMode === "add") && (
                     <Col
                         span={18}
-                        style={{ height: "100%", overflowY: "auto", paddingLeft: 16 }}
+                        style={{
+                            height: "calc(90vh - 56px)",
+                            overflowY: "auto",
+                            paddingLeft: 16
+                        }}
                     >
                         {/* EMPLOYEE SCHEMA FORM */}
                         {employeeSchema && (
                             <FormComponent
                                 schema={employeeSchema}
-                                onSave={(data) => console.log("ERP Saved:", data)}
-                                onCancel={() => console.log("ERP Cancelled")}
+                                mode={formMode}
+                                onSave={handleSaveProduct}
+                                onCancel={handleCancel}
+                                onEdit={() => setFormMode("edit")}
                                 data={formValues}
+                                dataId={selectedProduct?.productName}
+                                onDelete={handleDelete}
                             />
                         )}
 
                     </Col>
+
+
                 )}
             </Row>
+
         </Card>
     );
 };
