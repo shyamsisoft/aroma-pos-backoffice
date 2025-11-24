@@ -1,8 +1,9 @@
 import React from "react";
-import { Form, Input, InputNumber, Button, Space, Card, Select, Radio, Checkbox, DatePicker, } from "antd";
-import type { FormSchema, FormFieldSchema, EmployeeModel } from "../types/FormFieldSchema";
+import { Form, Input, InputNumber, Button, Space, Card, Select, Radio, Checkbox, DatePicker, Collapse } from "antd";
+import type { FormSchema, FormFieldSchema, ProductModel } from "../types/FormFieldSchema";
 
 
+const { Panel } = Collapse;
 
 export interface FormValues {
     [field: string]: any;
@@ -11,7 +12,7 @@ export interface FormValues {
 export interface FormComponentProps {
     schema: FormSchema;
     values?: FormValues;
-    data?: EmployeeModel;
+    data?: ProductModel;
     onSave: (values: FormValues) => void;
     onCancel: () => void;
 }
@@ -63,7 +64,7 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
             case "checkbox":
                 return <Checkbox>{field.label}</Checkbox>;
 
-            case "date":
+            case "Date":
                 return <DatePicker style={{ width: "100%" }} />;
 
             default:
@@ -71,55 +72,36 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
         }
     };
 
-    // const dataField = (field: FormFieldSchema) => {
-    //     field.dataField = 
-
-    // };
 
     return (
         <Card
             title={schema.formTitle}
-            style={{ padding: 20, borderRadius: 12, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
+            style={{ borderRadius: 5, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
         >
             <Form layout="vertical" form={form} onFinish={onSave} initialValues={data}>
-                {schema.sections.length !== 0 && schema.sections.map(section => (
-                    <Card
-                        key={section.title}
-                        title={section.title}
-                        size="small"
-                        style={{ marginBottom: 20, borderRadius: 8 }}
-                    >
-                        {section.fields.map(function mapFields(field) {
-                            //const dataSection = data.sections.filter(sec => sec.title === section.title)
-                            //console.log("datasection begin");
-
-                            //console.log(dataSection);
-                            //console.log("datasection end");
-
-                            //console.log("currentDataField begin");
-                            //const [currentDataField] = dataSection[0].fields.filter(fld => fld.name === field.name)
-                            //console.log(currentDataField)
-                            //console.log("currentDataField end");
-                            return <Form.Item
-                                key={field.name}
-                                label={field.type !== "checkbox" ? field.label : undefined}
-                                name={field.name}
-                                valuePropName={field.type == "checkbox" ? "checked" : "value"}
-
-                            >
-                                {renderField(field)}
-                            </Form.Item>
-                        })}
-                    </Card>
-                ))}
+                <Collapse accordion>
+                    {schema.sections.map((section) => (
+                        <Panel header={section.title} key={section.title}>
+                            {section.fields.map(field => (
+                                <Form.Item
+                                    key={field.name}
+                                    label={field.type !== "checkbox" ? field.label : undefined}
+                                    name={field.name}
+                                    valuePropName={field.type === "checkbox" ? "checked" : "value"}
+                                >
+                                    {renderField(field)}
+                                </Form.Item>
+                            ))}
+                        </Panel>
+                    ))}
+                </Collapse>
 
                 <Space style={{ marginTop: 16 }}>
-                    <Button type="primary" htmlType="submit">
-                        Save
-                    </Button>
+                    <Button type="primary" htmlType="submit">Save</Button>
                     <Button onClick={onCancel}>Cancel</Button>
                 </Space>
             </Form>
+
         </Card>
     );
 };
