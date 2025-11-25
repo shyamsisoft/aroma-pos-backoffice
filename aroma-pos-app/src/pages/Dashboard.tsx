@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Card, Button, Table, Row, Col, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
-
 import { type FormSchema, type ProductModel } from "../types/FormFieldSchema";
 import FormComponent from "../components/FormComponent";
 
@@ -10,10 +9,9 @@ import FormComponent from "../components/FormComponent";
 
 const ItemMasterPage: React.FC = () => {
 
-    const [employeeSchema, setEmployeeSchema] = useState<FormSchema | null>(null);
+    const [formSchema, setFormSchema] = useState<FormSchema | null>(null);
     const [formValues, setFormValues] = useState<ProductModel[]>([])
     const [formMode, setFormMode] = useState<"view" | "edit" | "add">("view");
-
 
     const [selectedProduct, setSelectedProduct] = useState<ProductModel | null>(null);
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
@@ -30,7 +28,7 @@ const ItemMasterPage: React.FC = () => {
 
         fetch("/data/FormSchema.json")
             .then(res => res.json())
-            .then(res => setEmployeeSchema(res))
+            .then(res => setFormSchema(res))
             .catch(err => console.error("Error loading EmployeeFormSchema:", err));
 
     }, []);
@@ -52,7 +50,7 @@ const ItemMasterPage: React.FC = () => {
                         type="primary"
                         size="small"
                         onClick={(e) => {
-                            e.stopPropagation(); // prevent row click
+                            e.stopPropagation();
                             handleRowClick(record, index);
                             setFormMode("edit");
                         }}
@@ -65,7 +63,7 @@ const ItemMasterPage: React.FC = () => {
                         danger
                         size="small"
                         onClick={(e) => {
-                            e.stopPropagation(); // prevent row click
+                            e.stopPropagation();
                             setSelectedIndex(index);
                             setSelectedProduct(record);
                             handleDelete();
@@ -82,14 +80,13 @@ const ItemMasterPage: React.FC = () => {
 
     const columns =
         selectedProduct || formMode === "add"
-            ? baseColumns.slice(0, 1) // shrink: only show name
+            ? baseColumns.slice(0, 1)
             : baseColumns;
 
     const handleRowClick = (record: ProductModel, index: number) => {
         setSelectedProduct(record);
         setSelectedIndex(index);
         setFormMode("view");
-
     };
 
     const handleAddNew = () => {
@@ -104,7 +101,6 @@ const ItemMasterPage: React.FC = () => {
 
         if (formMode === "add") {
             const newformValues: ProductModel = {
-                //id: "P" + (products.length + 1).toString().padStart(3, "0"),
                 productName: values.productName,
                 category: values.category!,
                 sku: values.sku!,
@@ -122,11 +118,6 @@ const ItemMasterPage: React.FC = () => {
             setFormValues(prev => [...prev, newformValues]);
             message.success("Product Added!");
             setSelectedProduct(newformValues);
-
-            console.log("updated products");
-
-            console.log(newformValues);
-
         }
 
         if (formMode === "edit" && selectedProduct) {
@@ -144,15 +135,11 @@ const ItemMasterPage: React.FC = () => {
     const handleCancel = () => {
         setFormMode("view");
         setSelectedProduct(null);
-
-
     }
 
     const handleDelete = () => {
         if (selectedIndex === null) return;
-
         const updatedList = formValues!.filter((_, index) => index !== selectedIndex);
-
         setFormValues(updatedList);
         setSelectedIndex(null);
         setSelectedProduct(null);
@@ -167,7 +154,6 @@ const ItemMasterPage: React.FC = () => {
                     Add New
                 </Button>
             }
-
         >
             <Row gutter={16} style={{ flex: 1, minHeight: 0 }}>
                 {/* LEFT PANEL */}
@@ -175,7 +161,7 @@ const ItemMasterPage: React.FC = () => {
                     span={selectedProduct || formMode === "add" ? 6 : 24}
                     style={{
                         position: "sticky",
-                        top: 56, // height of Card header
+                        top: 56,
                         height: "calc(90vh - 56px)",
                         alignSelf: "flex-start",
                         borderRight: "1px solid #f0f0f0",
@@ -184,7 +170,7 @@ const ItemMasterPage: React.FC = () => {
                         paddingRight: 8,
                         display: "flex",
                         flexDirection: "column",
-                        overflow: "hidden" // IMPORTANT: prevents column from scrolling
+                        overflow: "hidden"
                     }}
                 >
                     <div style={{ overflowY: "auto", flex: 1 }}>
@@ -221,10 +207,10 @@ const ItemMasterPage: React.FC = () => {
                             paddingLeft: 16
                         }}
                     >
-                        {/* EMPLOYEE SCHEMA FORM */}
-                        {employeeSchema && (
+                        {/* FORM SCHEMA TEMPLATE */}
+                        {formSchema && (
                             <FormComponent
-                                schema={employeeSchema}
+                                schema={formSchema}
                                 mode={formMode}
                                 onSave={handleSaveProduct}
                                 onCancel={handleCancel}

@@ -41,20 +41,20 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
     const renderField = (field: FormFieldSchema) => {
         switch (field.type) {
             case "text":
-                return <Input placeholder={field.placeholder} />;
+                return <Input placeholder={field.placeholder} disabled={mode !== "edit"} />;
 
             case "textarea":
-                return <Input.TextArea rows={3} placeholder={field.placeholder} />;
+                return <Input.TextArea rows={3} placeholder={field.placeholder} disabled={mode !== "edit"} />;
 
             case "number":
-                return <InputNumber style={{ width: "100%" }} />;
+                return <InputNumber style={{ width: "100%" }} disabled={mode !== "edit"} />;
 
             case "email":
-                return <Input type="email" placeholder={field.placeholder} />;
+                return <Input type="email" placeholder={field.placeholder} disabled={mode !== "edit"} />;
 
             case "select":
                 return (
-                    <Select placeholder={field.placeholder}>
+                    <Select placeholder={field.placeholder} disabled={mode !== "edit"}>
                         {field.options?.map(op => (
                             <Select.Option key={op.value} value={op.value}>
                                 {op.label}
@@ -65,7 +65,7 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
 
             case "radio":
                 return (
-                    <Radio.Group>
+                    <Radio.Group disabled={mode !== "edit"}>
                         {field.options?.map(op => (
                             <Radio key={op.value} value={op.value}>
                                 {op.label}
@@ -75,13 +75,13 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
                 );
 
             case "checkbox":
-                return <Checkbox>{field.label}</Checkbox>;
+                return <Checkbox disabled={mode !== "edit"}>{field.label}</Checkbox>;
 
             case "Date":
-                return <DatePicker style={{ width: "100%" }} />;
+                return <DatePicker style={{ width: "100%" }} disabled={mode !== "edit"} />;
 
             default:
-                return <Input placeholder={field.placeholder} />;
+                return <Input placeholder={field.placeholder} disabled={mode !== "edit"} />;
         }
     };
 
