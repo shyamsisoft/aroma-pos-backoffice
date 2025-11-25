@@ -1,73 +1,230 @@
+/* --------------------------------------------------
+   GLOBAL THEME VARIABLES
+-------------------------------------------------- */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --sky-blue: #3268f3;
+  /* Sea blue */
+  --sky-blue-dark: #0053f9;
+  --grass-green: #32cd32;
+  --grass-green-dark: #28a428;
+  --gray-light: #f0f2f5;
+  --gray-border: #dbe3f1;
+  --border-radius: 10px;
+  --panel-bg: #ffffff;
+  --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.1);
+  --transition-speed: 0.3s;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+/* --------------------------------------------------
+   MAIN CARD (Item Master Page)
+-------------------------------------------------- */
+.lm-card {
+  border-radius: var(--border-radius) !important;
+  background: var(--panel-bg);
+  box-shadow: var(--shadow-soft);
+  transition: box-shadow var(--transition-speed) ease;
 }
 
-a:hover {
-  color: #535bf2;
+.lm-card:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
-body {
+/* Heading banner with auto height + 2px extra */
+.main-card .ant-card-head {
+  background: var(--sky-blue);
+  padding: 8px 25px;
   margin: 0;
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+  min-height: auto;
+  transition: background var(--transition-speed);
+}
+
+.main-card .ant-card-head-title {
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  padding: 0px 0;
+  line-height: 1.4;
+  /* height aligned with font */
+  margin: 0;
+}
+
+/* --------------------------------------------------
+   COLLAPSE PANELS
+-------------------------------------------------- */
+.lm-collapse {
+  background: var(--panel-bg);
+  border-radius: var(--border-radius);
+  transition: all var(--transition-speed);
+}
+
+.lm-panel {
+  background: var(--gray-light);
+  border-radius: var(--border-radius);
+  margin: 0 0 5px 0;
+  box-shadow: var(--shadow-soft);
+  transition: box-shadow var(--transition-speed), transform var(--transition-speed);
+}
+
+.lm-panel:hover {
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.lm-panel .ant-collapse-header {
+  background: var(--sky-blue);
+  color: white !important;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 6px !important;
+  line-height: 1.4;
+  min-height: auto;
+  transition: background var(--transition-speed);
+}
+
+.lm-panel .ant-collapse-header:hover {
+  background: var(--sky-blue-dark);
+}
+
+.lm-panel .ant-collapse-content {
+  background: var(--panel-bg);
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
+  transition: all var(--transition-speed);
+}
+
+/* --------------------------------------------------
+   FORM ITEMS
+-------------------------------------------------- */
+.lm-form-item label {
+  font-weight: 600;
+  color: #333;
+  line-height: 1.6;
+  /* Adjust height according to font */
+  margin-bottom: 6px;
+  transition: color var(--transition-speed);
+}
+
+.lm-form-item label.ant-form-item-required::before {
+  color: var(--grass-green);
+}
+
+.lm-input-wrapper input,
+.lm-input-wrapper textarea,
+.lm-input-wrapper .ant-input,
+.lm-input-wrapper .ant-select-selector,
+.lm-input-wrapper .ant-picker-input>input {
+  border-radius: var(--border-radius) !important;
+  transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.ant-input:focus,
+.ant-input:hover,
+.ant-select-selector:hover,
+.ant-picker-focused {
+  border-color: var(--sky-blue) !important;
+  box-shadow: 0 0 6px rgba(56, 101, 214, 0.2);
+}
+
+/* --------------------------------------------------
+   BUTTONS
+-------------------------------------------------- */
+.custom-btn {
+  background: var(--grass-green) !important;
+  border-color: var(--grass-green) !important;
+  color: white !important;
+  border-radius: var(--border-radius);
+  transition: all var(--transition-speed);
+  padding: 6px 16px;
+  font-weight: 600;
+}
+
+.custom-btn:hover {
+  background: var(--grass-green-dark) !important;
+  border-color: var(--grass-green-dark) !important;
+  box-shadow: 0 4px 12px rgba(50, 205, 50, 0.3);
+}
+
+.lm-btn-secondary {
+  border-radius: var(--border-radius);
+}
+
+.lm-btn-add {
+  background: var(--grass-green) !important;
+  border-color: var(--grass-green) !important;
+  font-weight: 600;
+}
+
+.lm-delete-btn {
+  background: #ff4d4f !important;
+  border-color: #ff4d4f !important;
+  border-radius: var(--border-radius);
+  padding: 4px 8px;
+  transition: all var(--transition-speed);
+}
+
+.lm-delete-btn:hover {
+  box-shadow: 0 3px 10px rgba(255, 77, 79, 0.4);
+}
+
+/* --------------------------------------------------
+   TABLE STYLING
+-------------------------------------------------- */
+.lm-table {
+  border-radius: var(--border-radius);
+  transition: all var(--transition-speed);
+}
+
+.lm-table .ant-table-thead>tr>th {
+  background: var(--sky-blue);
+  color: white;
+  font-weight: 600;
+  padding: 8px 12px;
+  text-align: left;
+  transition: background var(--transition-speed);
+}
+
+.lm-table .ant-table-thead>tr>th:hover {
+  background: var(--sky-blue-dark);
+}
+
+.lm-table .ant-table-row:hover {
+  background: #6d88e027 !important;
+  transition: background var(--transition-speed);
+}
+
+.lm-row-selected {
+  background: #2690db !important;
+}
+
+.lm-row {
+  transition: background 0.2s ease;
+}
+
+/* Scrollable left panel wrapper */
+.lm-table-wrapper {
+  overflow-y: auto;
+  height: calc(90vh - 56px);
+  padding-right: 8px;
+}
+
+/* --------------------------------------------------
+   LAYOUT PANELS
+-------------------------------------------------- */
+.lm-left-panel {
+  background: var(--panel-bg);
+  border-right: 2px solid var(--gray-border);
+  padding: 0 8px;
+}
+
+.lm-right-panel {
+  padding-left: 15px;
+}
+
+/* --------------------------------------------------
+   BUTTON ROW AT THE BOTTOM
+-------------------------------------------------- */
+.lm-button-row {
+  padding-top: 8px;
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-
-button:hover {
-  border-color: #646cff;
-}
-
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-
-  a:hover {
-    color: #747bff;
-  }
-
-  button {
-    background-color: #f9f9f9;
-  }
+  gap: 12px;
 }

@@ -5,6 +5,10 @@ import type { ColumnsType } from "antd/es/table";
 import { type FormSchema, type ProductModel } from "../types/FormFieldSchema";
 import FormComponent from "../components/FormComponent";
 
+import { Modal } from "antd";
+
+const { confirm } = Modal;
+
 
 
 const ItemMasterPage: React.FC = () => {
@@ -64,13 +68,15 @@ const ItemMasterPage: React.FC = () => {
                         size="small"
                         onClick={(e) => {
                             e.stopPropagation();
-                            setSelectedIndex(index);
-                            setSelectedProduct(record);
-                            handleDelete();
+                            // setSelectedIndex(index);
+                            // setSelectedProduct(record);
+                            // handleDeleteProduct();
+                            handleDelete(index);
                         }}
                     >
                         Delete
                     </Button>
+
 
                 </div>
             ),
@@ -95,32 +101,38 @@ const ItemMasterPage: React.FC = () => {
         setFormMode("add");
     };
 
+    function handleDelete(i: number | null) {
+        if (i === null) return;
+        confirm({
+            title: "Do you want to delete this product?",
+            content: `Product: ${i !== null ? formValues[i]?.productName ?? JSON.stringify(formValues[i]) : ""}`,
+            okText: "Yes",
+            okType: "danger",
+            cancelText: "No",
+            onOk() {
+                const selectedItem = formValues[i]
+                setFormValues(formValues.filter(formValue => formValue.productName !== selectedItem.productName));
+                setSelectedIndex(null);
+                setSelectedProduct(null);
+            },
+            onCancel() {
+                console.log("Delete cancelled");
+            },
+        })
 
 
-    const handleSaveProduct = (values: ProductModel) => {
+    }
 
+
+    function handleSaveProduct(values: ProductModel) {
         if (formMode === "add") {
             const newformValues: ProductModel = {
-                productName: values.productName,
-                category: values.category!,
-                sku: values.sku!,
-                unitPrice: values.unitPrice!,
-                quantity: values.quantity!,
-                isActive: values.isActive!,
-                supplierName: values.supplierName!,
-                supplierContact: values.supplierContact!,
-                deliveryDays: values.deliveryDays!,
-                description: values.description!,
-                warranty: values.warranty!,
-                launchDate: values.launchDate!
+                ...values
             };
-
             setFormValues(prev => [...prev, newformValues]);
             message.success("Product Added!");
             setSelectedProduct(newformValues);
-        }
-
-        if (formMode === "edit" && selectedProduct) {
+        } else if (selectedProduct && formMode === "edit") {
             const updated = formValues.map(p =>
                 p.productName === selectedProduct.productName ? { ...p, ...values } : p
             );
@@ -131,34 +143,27 @@ const ItemMasterPage: React.FC = () => {
         setFormMode("view");
     };
 
-
-    const handleCancel = () => {
+    function handleCancel() {
         setFormMode("view");
         setSelectedProduct(null);
     }
 
-    const handleDelete = () => {
-        if (selectedIndex === null) return;
-        const updatedList = formValues!.filter((_, index) => index !== selectedIndex);
-        setFormValues(updatedList);
-        setSelectedIndex(null);
-        setSelectedProduct(null);
-    };
-
 
     return (
-        <Card
+        <Card className="lm-card main-card"
+            style={{ margin: 0 }}
             title="Product Master"
             extra={
-                <Button type="primary" icon={<PlusOutlined />} onClick={handleAddNew}>
+                <Button className="custom-btn lm-btn-add" type="primary" icon={<PlusOutlined />} onClick={handleAddNew}>
                     Add New
                 </Button>
             }
         >
-            <Row gutter={16} style={{ flex: 1, minHeight: 0 }}>
+            <Row gutter={16} className="lm-layout-row" style={{ flex: 1, minHeight: 0 }}>
                 {/* LEFT PANEL */}
                 <Col
                     span={selectedProduct || formMode === "add" ? 6 : 24}
+                    className="lm-left-panel"
                     style={{
                         position: "sticky",
                         top: 56,
@@ -173,8 +178,9 @@ const ItemMasterPage: React.FC = () => {
                         overflow: "hidden"
                     }}
                 >
-                    <div style={{ overflowY: "auto", flex: 1 }}>
+                    <div className="lm-table-wrapper" style={{ overflowY: "auto", flex: 1 }}>
                         <Table
+                            className="lm-table"
                             columns={columns}
                             dataSource={formValues}
                             pagination={false}
@@ -200,6 +206,7 @@ const ItemMasterPage: React.FC = () => {
                 {/* RIGHT PANEL */}
                 {(selectedProduct || formMode === "add") && (
                     <Col
+                        className="lm-right-panel"
                         span={18}
                         style={{
                             height: "calc(90vh - 56px)",
@@ -217,7 +224,7 @@ const ItemMasterPage: React.FC = () => {
                                 onEdit={() => setFormMode("edit")}
                                 data={formValues}
                                 dataId={selectedProduct?.productName}
-                                onDelete={handleDelete}
+                                onDelete={() => handleDelete(selectedIndex)}
                             />
                         )}
 

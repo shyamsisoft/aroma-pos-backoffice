@@ -141,24 +141,31 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
 
 
     return (
-        <Card title={schema.formTitle} style={{ borderRadius: 5 }}>
+        <Card
+            className="lm-card" title={schema.formTitle} style={{ borderRadius: 5 }}>
             <Form
                 layout="vertical"
                 form={form}
                 onFinish={onSave}
+                className="lm-form"
             >
-                <Collapse accordion>
+                <Collapse accordion className="lm-collapse" style={{ margin: -15 }}>
                     {schema.sections.map(section => (
-                        <Panel header={section.title} key={section.title}>
+                        <Panel className="lm-panel " header={section.title} key={section.title} >
                             {section.fields.map(field => (
                                 <Form.Item
+
+                                    className="lm-form-item"
                                     key={field.name}
                                     label={field.type !== "checkbox" ? field.label : undefined}
                                     name={field.name}
                                     valuePropName={field.type === "checkbox" ? "checked" : "value"}
                                     rules={normalizeValidations(field.validations as any, field.type)}
                                 >
+
                                     {renderField(field)}
+
+
                                 </Form.Item>
 
                             ))}
@@ -166,26 +173,26 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
                     ))}
                 </Collapse>
 
-                <Space style={{ marginTop: 16 }}>
+                <Space className="lm-button-row" style={{ marginTop: 16 }}>
                     {mode === "view" && (
                         <>
-                            <Button type="primary" onClick={onEdit}>
+                            <Button className="custom-btn lm-btn" type="primary" onClick={onEdit}>
                                 Edit
                             </Button>
-                            <Button onClick={onCancel}>Cancel</Button>
+                            <Button className="lm-btn-secondary" onClick={onCancel}>Cancel</Button>
                         </>
                     )}
 
                     {(mode === "edit" || mode === "add") && (
                         <>
-                            <Button type="primary" htmlType="submit">Save</Button>
-                            <Button onClick={onCancel}>Cancel</Button>
+                            <Button className="custom-btn lm-btn" type="primary" htmlType="submit">Save</Button>
+                            <Button className="lm-btn-secondary" onClick={onCancel}>Cancel</Button>
 
                         </>
                     )}
 
                     {(mode != "add") && (
-                        <Button danger type="primary" style={{ marginLeft: 550 }} onClick={onDelete} >Delete Product</Button>
+                        <Button className="lm-delete-btn" danger type="primary" style={{ marginLeft: 55 }} onClick={onDelete} >Delete Product</Button>
                     )}
                 </Space>
             </Form>
