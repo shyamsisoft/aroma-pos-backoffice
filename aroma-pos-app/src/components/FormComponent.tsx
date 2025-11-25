@@ -41,20 +41,20 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
     const renderField = (field: FormFieldSchema) => {
         switch (field.type) {
             case "text":
-                return <Input placeholder={field.placeholder} disabled={mode !== "edit"} />;
+                return <Input placeholder={field.placeholder} disabled={mode == "view"} />;
 
             case "textarea":
-                return <Input.TextArea rows={3} placeholder={field.placeholder} disabled={mode !== "edit"} />;
+                return <Input.TextArea rows={3} placeholder={field.placeholder} disabled={mode == "view"} />;
 
             case "number":
-                return <InputNumber style={{ width: "100%" }} disabled={mode !== "edit"} />;
+                return <InputNumber style={{ width: "100%" }} disabled={mode == "view"} />;
 
             case "email":
-                return <Input type="email" placeholder={field.placeholder} disabled={mode !== "edit"} />;
+                return <Input type="email" placeholder={field.placeholder} disabled={mode == "view"} />;
 
             case "select":
                 return (
-                    <Select placeholder={field.placeholder} disabled={mode !== "edit"}>
+                    <Select placeholder={field.placeholder} disabled={mode == "view"}>
                         {field.options?.map(op => (
                             <Select.Option key={op.value} value={op.value}>
                                 {op.label}
@@ -65,7 +65,7 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
 
             case "radio":
                 return (
-                    <Radio.Group disabled={mode !== "edit"}>
+                    <Radio.Group disabled={mode == "view"}>
                         {field.options?.map(op => (
                             <Radio key={op.value} value={op.value}>
                                 {op.label}
@@ -75,15 +75,70 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
                 );
 
             case "checkbox":
-                return <Checkbox disabled={mode !== "edit"}>{field.label}</Checkbox>;
+                return <Checkbox disabled={mode == "view"}>{field.label}</Checkbox>;
 
             case "Date":
-                return <DatePicker style={{ width: "100%" }} disabled={mode !== "edit"} />;
+                return <DatePicker style={{ width: "100%" }} disabled={mode == "view"} />;
 
             default:
-                return <Input placeholder={field.placeholder} disabled={mode !== "edit"} />;
+                return <Input placeholder={field.placeholder} disabled={mode == "view"} />;
         }
     };
+
+    const normalizeValidations = (rules: any[], fieldType: string) => {
+        return rules.map(rule => {
+            const newRule: any = { ...rule };
+
+
+            if (fieldType === "text" || fieldType === "textarea") {
+
+                // min -> convert to min length rule
+                if (rule.min !== undefined) {
+                    newRule.min = rule.min; // length validation
+                    newRule.type = "string";
+                }
+
+                // max -> convert to max length rule
+                if (rule.max !== undefined) {
+                    newRule.max = rule.max;
+                    newRule.type = "string";
+                }
+
+                // pattern rule
+                if (rule.pattern) {
+                    newRule.pattern = new RegExp(rule.pattern);
+                }
+
+                return newRule;
+            }
+
+            if (fieldType === "number") {
+                newRule.type = "number";
+
+                // Allow empty while typing
+                newRule.transform = (value: any) =>
+                    value === "" || value === null || value === undefined
+                        ? undefined
+                        : Number(value);
+
+                return newRule;
+            }
+
+            if (fieldType === "date") {
+                newRule.type = "date";
+                return newRule;
+            }
+
+
+            if (fieldType === "checkbox" || fieldType === "select") {
+                return newRule;
+            }
+
+            return newRule;
+        });
+    };
+
+
 
     return (
         <Card title={schema.formTitle} style={{ borderRadius: 5 }}>
@@ -101,9 +156,11 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
                                     label={field.type !== "checkbox" ? field.label : undefined}
                                     name={field.name}
                                     valuePropName={field.type === "checkbox" ? "checked" : "value"}
+                                    rules={normalizeValidations(field.validations as any, field.type)}
                                 >
                                     {renderField(field)}
                                 </Form.Item>
+
                             ))}
                         </Panel>
                     ))}
@@ -123,6 +180,7 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
                         <>
                             <Button type="primary" htmlType="submit">Save</Button>
                             <Button onClick={onCancel}>Cancel</Button>
+
                         </>
                     )}
 

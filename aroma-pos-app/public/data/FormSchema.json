@@ -8,7 +8,17 @@
                     "name": "productName",
                     "label": "Product Name",
                     "type": "text",
-                    "placeholder": "Enter product name"
+                    "placeholder": "Enter product name",
+                    "validations": [
+                        {
+                            "required": true,
+                            "message": "Enter a valid Product name"
+                        },
+                        {
+                            "min": 3,
+                            "message": "Product name must be at least 3 characters"
+                        }
+                    ]
                 },
                 {
                     "name": "category",
@@ -31,13 +41,29 @@
                             "label": "Furniture",
                             "value": "furniture"
                         }
+                    ],
+                    "validations": [
+                        {
+                            "required": true,
+                            "message": "Category is required"
+                        }
                     ]
                 },
                 {
                     "name": "sku",
                     "label": "SKU",
                     "type": "text",
-                    "placeholder": "Enter SKU"
+                    "placeholder": "Enter SKU",
+                    "validations": [
+                        {
+                            "required": true,
+                            "message": "Enter a valid SKU"
+                        },
+                        {
+                            "pattern": "^[A-Za-z0-9_-]+$",
+                            "message": "SKU must contain only letters, numbers, hyphens or underscores"
+                        }
+                    ]
                 }
             ]
         },
@@ -48,19 +74,40 @@
                     "name": "unitPrice",
                     "label": "Unit Price",
                     "type": "number",
-                    "placeholder": "Enter unit price"
+                    "placeholder": "Enter unit price",
+                    "validations": [
+                        {
+                            "required": true,
+                            "message": "Enter a valid Unit price"
+                        },
+                        {
+                            "min": 1,
+                            "message": "Price must be greater than 0"
+                        }
+                    ]
                 },
                 {
                     "name": "quantity",
                     "label": "Quantity in Stock",
                     "type": "number",
-                    "placeholder": "Enter stock quantity"
+                    "placeholder": "Enter stock quantity",
+                    "validations": [
+                        {
+                            "required": true,
+                            "message": "Enter a valid Quantity"
+                        },
+                        {
+                            "min": 0,
+                            "message": "Quantity cannot be negative"
+                        }
+                    ]
                 },
                 {
                     "name": "isActive",
                     "label": "Active Product",
                     "type": "checkbox",
-                    "defaultValue": true
+                    "defaultValue": true,
+                    "validations": []
                 }
             ]
         },
@@ -71,19 +118,45 @@
                     "name": "supplierName",
                     "label": "Supplier Name",
                     "type": "text",
-                    "placeholder": "Enter supplier name"
+                    "placeholder": "Enter supplier name",
+                    "validations": [
+                        {
+                            "required": true,
+                            "message": "Enter a valid Supplier name"
+                        }
+                    ]
                 },
                 {
                     "name": "supplierContact",
                     "label": "Supplier Contact",
                     "type": "text",
-                    "placeholder": "Enter supplier contact number"
+                    "placeholder": "Enter supplier contact number",
+                    "validations": [
+                        {
+                            "required": true,
+                            "message": "Enter a valid Supplier contact"
+                        },
+                        {
+                            "pattern": "^[0-9]{10}$",
+                            "message": "Contact number must be 10 digits"
+                        }
+                    ]
                 },
                 {
                     "name": "deliveryDays",
                     "label": "Delivery Time (Days)",
                     "type": "number",
-                    "placeholder": "Enter delivery days"
+                    "placeholder": "Enter delivery days",
+                    "validations": [
+                        {
+                            "required": true,
+                            "message": "Enter a valid Delivery time"
+                        },
+                        {
+                            "min": 1,
+                            "message": "Delivery days must be at least 1"
+                        }
+                    ]
                 }
             ]
         },
@@ -94,18 +167,35 @@
                     "name": "description",
                     "label": "Description",
                     "type": "textarea",
-                    "placeholder": "Enter product description"
+                    "placeholder": "Enter product description",
+                    "validations": []
                 },
                 {
                     "name": "warranty",
                     "label": "Warranty (Months)",
                     "type": "number",
-                    "placeholder": "Enter warranty period"
+                    "placeholder": "Enter warranty period",
+                    "validations": [
+                        {
+                            "required": true,
+                            "message": "Enter a valid warranty period"
+                        },
+                        {
+                            "min": 0,
+                            "message": "Warranty cannot be negative"
+                        }
+                    ]
                 },
                 {
                     "name": "launchDate",
                     "label": "Launch Date",
-                    "type": "date"
+                    "type": "date",
+                    "validations": [
+                        {
+                            "required": true,
+                            "message": "Enter a valid date"
+                        }
+                    ]
                 }
             ]
         }
