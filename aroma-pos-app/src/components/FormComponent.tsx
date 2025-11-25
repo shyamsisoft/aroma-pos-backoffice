@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Form, Input, InputNumber, Button, Space, Card, Select, Radio, Checkbox, DatePicker, Collapse } from "antd";
 
 import type { FormSchema, FormFieldSchema, ProductModel } from "../types/FormFieldSchema";
@@ -25,13 +25,11 @@ export interface FormComponentProps {
 const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel, onDelete, data, dataId, mode, onEdit }) => {
 
     const [form] = Form.useForm();
-    const [selectedProduct, setSelectedProduct] = useState<ProductModel | null>(null);
-
 
     useEffect(() => {
         if (data && dataId) {
             const found = data.find(p => p.productName === dataId);
-            setSelectedProduct(found || null);
+
 
             if (found) {
                 form.setFieldsValue(found);   // LOAD VALUES INTO FORM

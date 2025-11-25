@@ -20,31 +20,6 @@ export interface FormSchema {
 }
 
 
-
-
-
-
-
-
-// export interface FormFieldValue {
-//     formTitle: string;
-//     sections: ItemSection[];
-
-
-// }
-
-// export interface ItemSection {
-//     title: string;
-//     fields: ItemField[];
-// }
-
-// export interface ItemField {
-//     name: string;
-//     label: string;
-//     type: string;
-//     value: string
-// }
-
 export interface EmployeeModel {
     department: string
     isPermanent: boolean
