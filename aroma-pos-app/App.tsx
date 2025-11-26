@@ -21,7 +21,14 @@ import { MOCK_MENU_ITEMS, MOCK_CATEGORIES, MOCK_MODIFIER_GROUPS, MOCK_DEVICES, M
 const App: React.FC = () => {
   // Auth State
   const [currentUser, setCurrentUser] = useState<Employee | null>(null);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  
+  // Theme State - Initialize from Cookie
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+      // Check for cookie
+      const match = document.cookie.match(new RegExp('(^| )theme_mode=([^;]+)'));
+      if (match) return match[2] === 'dark';
+      return false; // Default to light if no cookie
+  });
   
   // Data State
   const [menuItems, setMenuItems] = useState<MenuItem[]>(MOCK_MENU_ITEMS);
@@ -47,8 +54,13 @@ const App: React.FC = () => {
       setActivities(prev => [newActivity, ...prev].slice(0, 200));
   };
 
-  // Update body background when theme changes
+  // Update body background and Cookie when theme changes
   useEffect(() => {
+    // Set Cookie (Expires in 1 year)
+    const themeValue = isDarkMode ? 'dark' : 'light';
+    document.cookie = `theme_mode=${themeValue}; path=/; max-age=31536000; SameSite=Lax`;
+
+    // Update DOM
     if (isDarkMode) {
         document.body.classList.add('dark-mode');
         document.body.style.backgroundColor = '#121212';
