@@ -1,51 +1,51 @@
 /* --------------------------------------------------
-   GLOBAL THEME VARIABLES
+   GLOBAL THEME VARIABLES (SQUARE UI)
 -------------------------------------------------- */
 :root {
   --sky-blue: #3268f3;
-  /* Sea blue */
   --sky-blue-dark: #0053f9;
+
   --grass-green: #32cd32;
   --grass-green-dark: #28a428;
+
   --gray-light: #f0f2f5;
   --gray-border: #dbe3f1;
-  --border-radius: 10px;
+
+  --border-radius: 0px;
+  /* FORCE SQUARE */
+
   --panel-bg: #ffffff;
-  --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.1);
+  --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.039);
   --transition-speed: 0.3s;
 }
 
 /* --------------------------------------------------
-   MAIN CARD (Item Master Page)
+   MAIN CARD
 -------------------------------------------------- */
 .lm-card {
-  border-radius: var(--border-radius) !important;
+  border-radius: 0 !important;
   background: var(--panel-bg);
   box-shadow: var(--shadow-soft);
-  transition: box-shadow var(--transition-speed) ease;
+  transition: box-shadow var(--transition-speed);
 }
 
-.lm-card:hover {
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+.heading-card {
+  font-size: 18px;
+  font-weight: 600;
 }
 
-/* Heading banner with auto height + 2px extra */
+/* Heading banner */
 .main-card .ant-card-head {
   background: var(--sky-blue);
   padding: 8px 25px;
-  margin: 0;
-  border-radius: var(--border-radius) var(--border-radius) 0 0;
+  border-radius: 0 !important;
   min-height: auto;
-  transition: background var(--transition-speed);
 }
 
 .main-card .ant-card-head-title {
   color: white;
   font-size: 18px;
   font-weight: 600;
-  padding: 0px 0;
-  line-height: 1.4;
-  /* height aligned with font */
   margin: 0;
 }
 
@@ -54,32 +54,24 @@
 -------------------------------------------------- */
 .lm-collapse {
   background: var(--panel-bg);
-  border-radius: var(--border-radius);
-  transition: all var(--transition-speed);
+  border-radius: 0 !important;
 }
 
 .lm-panel {
   background: var(--gray-light);
-  border-radius: var(--border-radius);
-  margin: 0 0 5px 0;
+  border-radius: 0 !important;
+  margin-bottom: 5px;
   box-shadow: var(--shadow-soft);
-  transition: box-shadow var(--transition-speed), transform var(--transition-speed);
+  transition: transform var(--transition-speed);
 }
 
-.lm-panel:hover {
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
-  transform: translateY(-2px);
-}
 
 .lm-panel .ant-collapse-header {
   background: var(--sky-blue);
   color: white !important;
   font-weight: 600;
   padding: 8px 12px;
-  border-radius: 6px !important;
-  line-height: 1.4;
-  min-height: auto;
-  transition: background var(--transition-speed);
+  border-radius: 0 !important;
 }
 
 .lm-panel .ant-collapse-header:hover {
@@ -88,8 +80,7 @@
 
 .lm-panel .ant-collapse-content {
   background: var(--panel-bg);
-  border-radius: 0 0 var(--border-radius) var(--border-radius);
-  transition: all var(--transition-speed);
+  border-radius: 0 !important;
 }
 
 /* --------------------------------------------------
@@ -98,14 +89,7 @@
 .lm-form-item label {
   font-weight: 600;
   color: #333;
-  line-height: 1.6;
-  /* Adjust height according to font */
   margin-bottom: 6px;
-  transition: color var(--transition-speed);
-}
-
-.lm-form-item label.ant-form-item-required::before {
-  color: var(--grass-green);
 }
 
 .lm-input-wrapper input,
@@ -113,8 +97,8 @@
 .lm-input-wrapper .ant-input,
 .lm-input-wrapper .ant-select-selector,
 .lm-input-wrapper .ant-picker-input>input {
-  border-radius: var(--border-radius) !important;
-  transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+  border-radius: 0 !important;
+  transition: border-color var(--transition-speed);
 }
 
 .ant-input:focus,
@@ -122,7 +106,6 @@
 .ant-select-selector:hover,
 .ant-picker-focused {
   border-color: var(--sky-blue) !important;
-  box-shadow: 0 0 6px rgba(56, 101, 214, 0.2);
 }
 
 /* --------------------------------------------------
@@ -132,8 +115,7 @@
   background: var(--grass-green) !important;
   border-color: var(--grass-green) !important;
   color: white !important;
-  border-radius: var(--border-radius);
-  transition: all var(--transition-speed);
+  border-radius: 0 !important;
   padding: 6px 16px;
   font-weight: 600;
 }
@@ -141,37 +123,24 @@
 .custom-btn:hover {
   background: var(--grass-green-dark) !important;
   border-color: var(--grass-green-dark) !important;
-  box-shadow: 0 4px 12px rgba(50, 205, 50, 0.3);
 }
 
 .lm-btn-secondary {
-  border-radius: var(--border-radius);
-}
-
-.lm-btn-add {
-  background: var(--grass-green) !important;
-  border-color: var(--grass-green) !important;
-  font-weight: 600;
+  border-radius: 0 !important;
 }
 
 .lm-delete-btn {
   background: #ff4d4f !important;
   border-color: #ff4d4f !important;
-  border-radius: var(--border-radius);
+  border-radius: 0 !important;
   padding: 4px 8px;
-  transition: all var(--transition-speed);
-}
-
-.lm-delete-btn:hover {
-  box-shadow: 0 3px 10px rgba(255, 77, 79, 0.4);
 }
 
 /* --------------------------------------------------
-   TABLE STYLING
+   TABLE (SQUARE + DARK SELECTED ROW)
 -------------------------------------------------- */
 .lm-table {
-  border-radius: var(--border-radius);
-  transition: all var(--transition-speed);
+  border-radius: 0 !important;
 }
 
 .lm-table .ant-table-thead>tr>th {
@@ -180,40 +149,46 @@
   font-weight: 600;
   padding: 8px 12px;
   text-align: left;
-  transition: background var(--transition-speed);
+  border-radius: 0 !important;
 }
 
 .lm-table .ant-table-thead>tr>th:hover {
   background: var(--sky-blue-dark);
 }
 
+/* Hover row */
 .lm-table .ant-table-row:hover {
-  background: #6d88e027 !important;
-  transition: background var(--transition-speed);
+  background: rgba(50, 104, 243, 0.18) !important;
 }
 
-.lm-row-selected {
-  background: #2690db !important;
+/* Selected row = darker color */
+.lm-row-selected,
+.lm-table .ant-table-row-selected {
+  background: #1a3a8a !important;
+  color: white !important;
 }
 
-.lm-row {
-  transition: background 0.2s ease;
+/* Ensure square corners everywhere */
+.ant-table-container,
+.ant-table-content {
+  border-radius: 0 !important;
 }
 
-/* Scrollable left panel wrapper */
+/* Scrollable left-panel table */
 .lm-table-wrapper {
+  border-radius: 0 !important;
   overflow-y: auto;
   height: calc(90vh - 56px);
-  padding-right: 8px;
+  padding: 8px;
 }
 
 /* --------------------------------------------------
    LAYOUT PANELS
 -------------------------------------------------- */
 .lm-left-panel {
-  background: var(--panel-bg);
+  background: white;
   border-right: 2px solid var(--gray-border);
-  padding: 0 8px;
+  border-radius: 0 !important;
 }
 
 .lm-right-panel {
@@ -221,7 +196,7 @@
 }
 
 /* --------------------------------------------------
-   BUTTON ROW AT THE BOTTOM
+   BUTTON ROW
 -------------------------------------------------- */
 .lm-button-row {
   padding-top: 8px;

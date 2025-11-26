@@ -1,14 +1,22 @@
-import React from "react";
-import { Layout } from "antd";
+import React, { useState } from "react";
+import { Layout, Row } from "antd";
 import Sidebar from "./Sidebar";
+import HeadingComponent from "../components/Heading";
+import { Header } from "antd/es/layout/layout";
+
 
 const { Sider, Content } = Layout;
 
 interface MasterLayoutProps {
     children: React.ReactNode;
+    title: string | null;
+    addNew: () => void;
 }
 
-const MasterLayout: React.FC<MasterLayoutProps> = ({ children }) => {
+const MasterLayout: React.FC<MasterLayoutProps> = ({ children, addNew, title }) => {
+
+    const [pageTitle, setPageTitle] = useState<string | null>("Product Master")
+
     return (
         <Layout style={{ minHeight: "100vh", minWidth: "100vw" }}>
             {/* Fixed Sidebar */}
@@ -39,15 +47,29 @@ const MasterLayout: React.FC<MasterLayoutProps> = ({ children }) => {
                 <Sidebar />
             </Sider>
 
+            {/* <Header>
+                <HeadingComponent
+
+                    addNew={addNew}
+                    title={`${title}`}
+                />
+                <Content >
+                    {children}
+                </Content>
+            </Header> */}
+
+
             {/* Scrollable Content */}
             <Layout
-                style={{
-                    marginLeft: 0, // no margin needed, sider is fixed
-                    flex: 1,
-                    overflowY: "auto", // content scrolls
-                }}
+                style={{ padding: 0, margin: 0, background: "#fff", overflow: "hidden", height: "100vh" }}
             >
-                <Content style={{ margin: "16px", padding: 24, background: "#fff" }}>
+                <HeadingComponent
+
+                    addNew={addNew}
+                    title={`${pageTitle}`}
+                />
+                <Content
+                    style={{ height: "95vh" }} >
                     {children}
                 </Content>
             </Layout>

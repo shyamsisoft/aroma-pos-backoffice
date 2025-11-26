@@ -142,19 +142,27 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
 
     return (
         <Card
-            className="lm-card" title={schema.formTitle} style={{ borderRadius: 5 }}>
+            className="lm-card" title={`Details of : ${dataId}`} style={{ borderRadius: 5, fontWeight: 800, textShadow: "15px" }}>
             <Form
                 layout="vertical"
                 form={form}
                 onFinish={onSave}
                 className="lm-form"
             >
-                <Collapse accordion className="lm-collapse" style={{ margin: -15 }}>
+                <Collapse
+                    accordion
+                    className="lm-collapse"
+                    style={{ margin: -15 }}
+                    defaultActiveKey={[schema.sections[0]?.title]} // open first panel
+                >
                     {schema.sections.map(section => (
-                        <Panel className="lm-panel " header={section.title} key={section.title} >
+                        <Panel
+                            className="lm-panel"
+                            header={section.title}
+                            key={section.title}
+                        >
                             {section.fields.map(field => (
                                 <Form.Item
-
                                     className="lm-form-item"
                                     key={field.name}
                                     label={field.type !== "checkbox" ? field.label : undefined}
@@ -162,16 +170,13 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
                                     valuePropName={field.type === "checkbox" ? "checked" : "value"}
                                     rules={normalizeValidations(field.validations as any, field.type)}
                                 >
-
                                     {renderField(field)}
-
-
                                 </Form.Item>
-
                             ))}
                         </Panel>
                     ))}
                 </Collapse>
+
 
                 <Space className="lm-button-row" style={{ marginTop: 16 }}>
                     {mode === "view" && (

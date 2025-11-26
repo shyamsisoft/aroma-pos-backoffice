@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Card, Button, Table, Row, Col, message } from "antd";
+import { Card, Button, Row, Col, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { type FormSchema, type ProductModel } from "../types/FormFieldSchema";
 import FormComponent from "../components/FormComponent";
 
 import { Modal } from "antd";
+import TableComponent from "../components/TableComponent";
+import HeadingComponent from "../components/Heading";
 
 const { confirm } = Modal;
 
@@ -19,9 +21,7 @@ const ItemMasterPage: React.FC = () => {
 
     const [selectedProduct, setSelectedProduct] = useState<ProductModel | null>(null);
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-
-
-
+    const [pageTitle, setPageTitle] = useState<string | null>("Product Master")
 
     useEffect(() => {
 
@@ -101,6 +101,8 @@ const ItemMasterPage: React.FC = () => {
         setFormMode("add");
     };
 
+
+
     function handleDelete(i: number | null) {
         if (i === null) return;
         confirm({
@@ -149,16 +151,11 @@ const ItemMasterPage: React.FC = () => {
     }
 
 
+
+
     return (
-        <Card className="lm-card main-card"
-            style={{ margin: 0 }}
-            title="Product Master"
-            extra={
-                <Button className="custom-btn lm-btn-add" type="primary" icon={<PlusOutlined />} onClick={handleAddNew}>
-                    Add New
-                </Button>
-            }
-        >
+
+        <div>
             <Row gutter={16} className="lm-layout-row" style={{ flex: 1, minHeight: 0 }}>
                 {/* LEFT PANEL */}
                 <Col
@@ -178,30 +175,20 @@ const ItemMasterPage: React.FC = () => {
                         overflow: "hidden"
                     }}
                 >
-                    <div className="lm-table-wrapper" style={{ overflowY: "auto", flex: 1 }}>
-                        <Table
-                            className="lm-table"
-                            columns={columns}
-                            dataSource={formValues}
-                            pagination={false}
-                            rowKey="id"
-                            onRow={(record, index) => ({
-                                onClick: () => handleRowClick(record, index!),
-                                style: {
-                                    cursor: "pointer",
-                                    background:
-                                        selectedProduct?.productName === record.productName ? "#f0f7ff" : undefined
-                                }
-                            })}
+                    <TableComponent
 
-                            scroll={{
-                                x: "max-content",
-                            }}
+                        selectedProduct={selectedProduct}
+                        mode={formMode}
+                        formValues={formValues}
+                        baseColumns={columns}
 
-                        />
+                        RowClick={(record, index) => { handleRowClick(record, index); }}
 
-                    </div>
+                    />
                 </Col>
+
+
+
 
                 {/* RIGHT PANEL */}
                 {(selectedProduct || formMode === "add") && (
@@ -234,7 +221,7 @@ const ItemMasterPage: React.FC = () => {
                 )}
             </Row>
 
-        </Card>
+        </div>
     );
 };
 
