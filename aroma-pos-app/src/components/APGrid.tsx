@@ -31,7 +31,7 @@ const APGrid: React.FC<TableComponentProps> = ({ selectedProduct, formValues, ba
                 columns={columns}
                 dataSource={formValues}
                 pagination={false}
-                rowKey="id"
+                rowKey="productName"
                 onRow={(record, index) => ({
                     onClick: () => RowClick(record, index!),
                     style: {
