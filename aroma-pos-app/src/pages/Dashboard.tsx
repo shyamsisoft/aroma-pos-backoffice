@@ -1,27 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { Card, Button, Row, Col, message } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
-import type { ColumnsType } from "antd/es/table";
-import { type FormSchema, type ProductModel } from "../types/FormFieldSchema";
-import FormComponent from "../components/FormComponent";
+import { useEffect, useState, type JSX } from "react";
 
+import { Button, message } from "antd";
+import type { ColumnsType } from "antd/es/table";
 import { Modal } from "antd";
-import TableComponent from "../components/TableComponent";
-import HeadingComponent from "../components/Heading";
+
+import { type FormSchema, type ProductModel } from "../types/FormFieldSchema";
+import APGrid from "../components/APGrid";
+import FormComponent from "../components/FormComponent";
+import ListMasterDetailFormLayout from "../components/ListMasterDetailFormLayout";
 
 const { confirm } = Modal;
 
-
-
-const ItemMasterPage: React.FC = () => {
+function ItemMasterPage(): JSX.Element {
 
     const [formSchema, setFormSchema] = useState<FormSchema | null>(null);
     const [formValues, setFormValues] = useState<ProductModel[]>([])
     const [formMode, setFormMode] = useState<"view" | "edit" | "add">("view");
-
     const [selectedProduct, setSelectedProduct] = useState<ProductModel | null>(null);
-    const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-    const [pageTitle, setPageTitle] = useState<string | null>("Product Master")
 
     useEffect(() => {
 
@@ -37,41 +32,25 @@ const ItemMasterPage: React.FC = () => {
 
     }, []);
 
-    const baseColumns: ColumnsType<ProductModel> = [
+    const columns: ColumnsType<ProductModel> = [
         { title: "Name", dataIndex: "productName", key: "productName", width: "60%" },
         { title: "Category", dataIndex: "category", key: "category" },
         { title: "Unit Price", dataIndex: "unitPrice", key: "unitPrice" },
-
         {
             title: "Actions",
             key: "actions",
             width: "120px",
-            render: (_, record, index) => (
+            render: (item) => (
                 <div style={{ display: "flex", gap: 8 }}>
 
-                    {/* EDIT BUTTON */}
                     <Button
+                        className="lm-delete-btn"
                         type="primary"
-                        size="small"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleRowClick(record, index);
-                            setFormMode("edit");
-                        }}
-                    >
-                        Edit
-                    </Button>
-
-                    {/* DELETE BUTTON */}
-                    <Button
                         danger
                         size="small"
                         onClick={(e) => {
                             e.stopPropagation();
-                            // setSelectedIndex(index);
-                            // setSelectedProduct(record);
-                            // handleDeleteProduct();
-                            handleDelete(index);
+                            handleDelete(item);
                         }}
                     >
                         Delete
@@ -83,48 +62,32 @@ const ItemMasterPage: React.FC = () => {
         },
     ];
 
-
-    const columns =
-        selectedProduct || formMode === "add"
-            ? baseColumns.slice(0, 1)
-            : baseColumns;
-
-    const handleRowClick = (record: ProductModel, index: number) => {
+    const handleRowClick = (record: ProductModel) => {
         setSelectedProduct(record);
-        setSelectedIndex(index);
         setFormMode("view");
     };
 
     const handleAddNew = () => {
         setSelectedProduct(null);
-        setSelectedIndex(null);
         setFormMode("add");
     };
 
-
-
-    function handleDelete(i: number | null) {
-        if (i === null) return;
+    function handleDelete(item: ProductModel | null) {
         confirm({
             title: "Do you want to delete this product?",
-            content: `Product: ${i !== null ? formValues[i]?.productName ?? JSON.stringify(formValues[i]) : ""}`,
+            content: `Product: ${item?.productName}`,
             okText: "Yes",
             okType: "danger",
             cancelText: "No",
             onOk() {
-                const selectedItem = formValues[i]
-                setFormValues(formValues.filter(formValue => formValue.productName !== selectedItem.productName));
-                setSelectedIndex(null);
+                setFormValues(formValues.filter(formValue => formValue.productName !== item?.productName));
                 setSelectedProduct(null);
             },
             onCancel() {
                 console.log("Delete cancelled");
             },
         })
-
-
     }
-
 
     function handleSaveProduct(values: ProductModel) {
         if (formMode === "add") {
@@ -150,78 +113,31 @@ const ItemMasterPage: React.FC = () => {
         setSelectedProduct(null);
     }
 
-
-
-
     return (
 
-        <div>
-            <Row gutter={16} className="lm-layout-row" style={{ flex: 1, minHeight: 0 }}>
-                {/* LEFT PANEL */}
-                <Col
-                    span={selectedProduct || formMode === "add" ? 6 : 24}
-                    className="lm-left-panel"
-                    style={{
-                        position: "sticky",
-                        top: 56,
-                        height: "calc(90vh - 56px)",
-                        alignSelf: "flex-start",
-                        borderRight: "1px solid #f0f0f0",
-                        background: "white",
-                        zIndex: 20,
-                        paddingRight: 8,
-                        display: "flex",
-                        flexDirection: "column",
-                        overflow: "hidden"
-                    }}
-                >
-                    <TableComponent
+        <ListMasterDetailFormLayout pageTitle="ProductMaster" handleAddNew={handleAddNew}>
 
-                        selectedProduct={selectedProduct}
-                        mode={formMode}
-                        formValues={formValues}
-                        baseColumns={columns}
+            <APGrid
+                selectedProduct={selectedProduct}
+                mode={formMode}
+                formValues={formValues}
+                baseColumns={columns}
+                RowClick={(record) => { handleRowClick(record); }}
+            />
+            {(selectedProduct || formMode === "add") && (<FormComponent
+                schema={formSchema}
+                mode={formMode}
+                onSave={handleSaveProduct}
+                onCancel={handleCancel}
+                onEdit={() => setFormMode("edit")}
+                data={formValues}
+                dataId={selectedProduct?.productName}
+                onDelete={() => handleDelete(selectedProduct)}
+                onAddNew={() => handleAddNew}
+            />)}
 
-                        RowClick={(record, index) => { handleRowClick(record, index); }}
+        </ListMasterDetailFormLayout>
 
-                    />
-                </Col>
-
-
-
-
-                {/* RIGHT PANEL */}
-                {(selectedProduct || formMode === "add") && (
-                    <Col
-                        className="lm-right-panel"
-                        span={18}
-                        style={{
-                            height: "calc(90vh - 56px)",
-                            overflowY: "auto",
-                            paddingLeft: 16
-                        }}
-                    >
-                        {/* FORM SCHEMA TEMPLATE */}
-                        {formSchema && (
-                            <FormComponent
-                                schema={formSchema}
-                                mode={formMode}
-                                onSave={handleSaveProduct}
-                                onCancel={handleCancel}
-                                onEdit={() => setFormMode("edit")}
-                                data={formValues}
-                                dataId={selectedProduct?.productName}
-                                onDelete={() => handleDelete(selectedIndex)}
-                            />
-                        )}
-
-                    </Col>
-
-
-                )}
-            </Row>
-
-        </div>
     );
 };
 

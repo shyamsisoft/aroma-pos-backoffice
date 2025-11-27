@@ -15,7 +15,7 @@ export interface TableComponentProps {
 
 }
 
-const TableComponent: React.FC<TableComponentProps> = ({ selectedProduct, formValues, baseColumns, mode, RowClick }) => {
+const APGrid: React.FC<TableComponentProps> = ({ selectedProduct, formValues, baseColumns, mode, RowClick }) => {
 
     const columns =
         selectedProduct || mode === "add"
@@ -52,5 +52,5 @@ const TableComponent: React.FC<TableComponentProps> = ({ selectedProduct, formVa
 
     );
 }
-export default TableComponent;
+export default APGrid;
 

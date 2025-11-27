@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Form, Input, InputNumber, Button, Space, Card, Select, Radio, Checkbox, DatePicker, Collapse } from "antd";
 
 import type { FormSchema, FormFieldSchema, ProductModel } from "../types/FormFieldSchema";
+import HeadingComponent from "./Heading";
 
 const { Panel } = Collapse;
 
@@ -10,7 +11,7 @@ export interface FormValues {
 }
 
 export interface FormComponentProps {
-    schema: FormSchema;
+    schema: FormSchema | null;
     values?: FormValues;
     data?: ProductModel[];
     dataId?: string;         // productName you want to load
@@ -19,10 +20,11 @@ export interface FormComponentProps {
     onCancel: () => void;
     onEdit: () => void;
     onDelete: () => void;
+    onAddNew: () => void;
 
 }
 
-const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel, onDelete, data, dataId, mode, onEdit }) => {
+const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel, onDelete, onAddNew, data, dataId, mode, onEdit }) => {
 
     const [form] = Form.useForm();
 
@@ -141,67 +143,71 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
 
 
     return (
-        <Card
-            className="lm-card" title={`Details of : ${dataId}`} style={{ borderRadius: 5, fontWeight: 800, textShadow: "15px" }}>
-            <Form
-                layout="vertical"
-                form={form}
-                onFinish={onSave}
-                className="lm-form"
-            >
-                <Collapse
-                    accordion
-                    className="lm-collapse"
-                    style={{ margin: -15 }}
-                    defaultActiveKey={[schema.sections[0]?.title]} // open first panel
+        <>
+
+            <Card
+                className="lm-card" title={`Details of : ${dataId}`} style={{ borderRadius: 5, fontWeight: 800, textShadow: "15px" }}>
+                <Form
+                    layout="vertical"
+                    form={form}
+                    onFinish={onSave}
+                    className="lm-form"
                 >
-                    {schema.sections.map(section => (
-                        <Panel
-                            className="lm-panel"
-                            header={section.title}
-                            key={section.title}
-                        >
-                            {section.fields.map(field => (
-                                <Form.Item
-                                    className="lm-form-item"
-                                    key={field.name}
-                                    label={field.type !== "checkbox" ? field.label : undefined}
-                                    name={field.name}
-                                    valuePropName={field.type === "checkbox" ? "checked" : "value"}
-                                    rules={normalizeValidations(field.validations as any, field.type)}
-                                >
-                                    {renderField(field)}
-                                </Form.Item>
-                            ))}
-                        </Panel>
-                    ))}
-                </Collapse>
+                    <Collapse
+                        accordion
+                        className="lm-collapse"
+                        style={{ margin: -15 }}
+                        defaultActiveKey={[schema ? schema.sections[0]?.title : "scmkey"]} // open first panel
+                    >
+                        {schema && schema.sections.map(section => (
+                            <Panel
+                                className="lm-panel"
+                                header={section.title}
+                                key={section.title}
+                            >
+                                {section.fields.map(field => (
+                                    <Form.Item
+                                        className="lm-form-item"
+                                        key={field.name}
+                                        label={field.type !== "checkbox" ? field.label : undefined}
+                                        name={field.name}
+                                        valuePropName={field.type === "checkbox" ? "checked" : "value"}
+                                        rules={normalizeValidations(field.validations as any, field.type)}
+                                    >
+                                        {renderField(field)}
+                                    </Form.Item>
+                                ))}
+                            </Panel>
+                        ))}
+                    </Collapse>
 
 
-                <Space className="lm-button-row" style={{ marginTop: 16 }}>
-                    {mode === "view" && (
-                        <>
-                            <Button className="custom-btn lm-btn" type="primary" onClick={onEdit}>
-                                Edit
-                            </Button>
-                            <Button className="lm-btn-secondary" onClick={onCancel}>Cancel</Button>
-                        </>
-                    )}
+                    <Space className="lm-button-row" style={{ marginTop: 16 }}>
+                        {mode === "view" && (
+                            <>
+                                <Button className="custom-btn lm-btn" type="primary" onClick={onEdit}>
+                                    Edit
+                                </Button>
+                                <Button className="lm-btn-secondary" onClick={onCancel}>Cancel</Button>
+                            </>
+                        )}
 
-                    {(mode === "edit" || mode === "add") && (
-                        <>
-                            <Button className="custom-btn lm-btn" type="primary" htmlType="submit">Save</Button>
-                            <Button className="lm-btn-secondary" onClick={onCancel}>Cancel</Button>
+                        {(mode === "edit" || mode === "add") && (
+                            <>
+                                <Button className="custom-btn lm-btn" type="primary" htmlType="submit">Save</Button>
+                                <Button className="lm-btn-secondary" onClick={onCancel}>Cancel</Button>
 
-                        </>
-                    )}
+                            </>
+                        )}
 
-                    {(mode != "add") && (
-                        <Button className="lm-delete-btn" danger type="primary" style={{ marginLeft: 55 }} onClick={onDelete} >Delete Product</Button>
-                    )}
-                </Space>
-            </Form>
-        </Card>
+                        {(mode != "add") && (
+                            <Button className="lm-delete-btn" danger type="primary" style={{ marginLeft: 55 }} onClick={onDelete} >Delete Product</Button>
+                        )}
+                    </Space>
+                </Form>
+            </Card>
+        </>
+
     );
 };
 

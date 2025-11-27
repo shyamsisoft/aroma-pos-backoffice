@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import MasterLayout from "./components/Layout";
+import MasterLayout from "./components/MasterLayout";
 import Dashboard from "./pages/Dashboard";
 import Users from "./pages/Users";
 import Reports from "./pages/Reports";
