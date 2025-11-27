@@ -127,11 +127,11 @@ function ItemMasterPage(): JSX.Element {
             {(selectedProduct || formMode === "add") && (<FormComponent
                 schema={formSchema}
                 mode={formMode}
+                data={formValues}
+                dataId={selectedProduct?.productName}
                 onSave={handleSaveProduct}
                 onCancel={handleCancel}
                 onEdit={() => setFormMode("edit")}
-                data={formValues}
-                dataId={selectedProduct?.productName}
                 onDelete={() => handleDelete(selectedProduct)}
             />)}
 

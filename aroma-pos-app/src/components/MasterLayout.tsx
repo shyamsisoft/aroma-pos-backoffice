@@ -39,7 +39,13 @@ const MasterLayout: React.FC<MasterLayoutProps> = ({ children }) => {
                 <Sidebar />
             </Sider>
             <Layout
-                style={{ padding: 0, margin: 0, background: "#fff", overflow: "hidden", height: "100vh" }}
+                style={{
+                    padding: 0,
+                    margin: 0,
+                    background: "#fff",
+                    overflow: "hidden",
+                    height: "100vh"
+                }}
             >
                 <Content
                     style={{ height: "100vh" }} >
