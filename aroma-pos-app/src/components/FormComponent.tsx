@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
 import { Form, Input, InputNumber, Button, Space, Card, Select, Radio, Checkbox, DatePicker, Collapse } from "antd";
 
-import type { FormSchema, FormFieldSchema, ProductModel, SectionSchema } from "../types/FormFieldSchema";
+import type { FormSchema, FormFieldSchema, ProductModel } from "../types/FormFieldSchema";
 
-const { Panel } = Collapse;
 
 export interface FormValues {
     [field: string]: any;
@@ -139,21 +138,8 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
         });
     };
 
-    function renderCollapse(field: FormFieldSchema): { key: string; label: React.ReactNode; children?: React.ReactNode } | null {
-        if (!field) return null;
-        return {
-            key: field.name,
-            label: field.label,
-            children: (
-                <div>
-                    {/* Your fields */}
-                </div>
-            )
-        };
-    }
     return (
         <>
-
             <Card
                 className="lm-card" title={`Details of : ${dataId}`} style={{ borderRadius: 5, fontWeight: 800, textShadow: "15px" }}>
                 <Form
@@ -162,12 +148,11 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
                     onFinish={onSave}
                     className="lm-form"
                 >
-                    {/* {schema?.sections.map(section => ( */}
                     <Collapse
                         accordion
                         className="lm-collapse"
                         style={{ margin: -15 }}
-                        defaultActiveKey={[schema ? schema.sections[0]?.title : "scmkey"]} // open first panel
+                        defaultActiveKey={[schema ? schema.sections[0]?.title : "scmkey"]}
                         items={schema?.sections.map(section => ({
                             key: section.title,
                             label: section.title,
