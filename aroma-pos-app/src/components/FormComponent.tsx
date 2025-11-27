@@ -12,49 +12,43 @@ export interface FormComponentProps {
     schema: FormSchema | null;
     values?: FormValues;
     data?: ProductModel[];
-    dataId?: string;         // productName you want to load
+    dataId?: string;
     mode: "view" | "edit" | "add";
     onSave: (values: ProductModel) => void;
     onCancel: () => void;
     onEdit: () => void;
     onDelete: () => void;
-    onAddNew: () => void;
 
 }
 
-const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel, onDelete, onAddNew, data, dataId, mode, onEdit }) => {
+const FormComponent: React.FC<FormComponentProps> = ({ schema, data, dataId, mode, onEdit, onSave, onCancel, onDelete }) => {
 
     const [form] = Form.useForm();
-
     useEffect(() => {
         if (data && dataId) {
             const found = data.find(p => p.productName === dataId);
-
-
-            if (found) {
-                form.setFieldsValue(found);   // LOAD VALUES INTO FORM
-            }
+            if (found) form.setFieldsValue(found);
         }
     }, [data, dataId, form]);
 
-
     const renderField = (field: FormFieldSchema) => {
+        const { placeholder } = field
         switch (field.type) {
             case "text":
-                return <Input placeholder={field.placeholder} disabled={mode == "view"} />;
+                return <Input placeholder={placeholder} disabled={mode == "view"} />;
 
             case "textarea":
-                return <Input.TextArea rows={3} placeholder={field.placeholder} disabled={mode == "view"} />;
+                return <Input.TextArea rows={3} placeholder={placeholder} disabled={mode == "view"} />;
 
             case "number":
                 return <InputNumber style={{ width: "100%" }} disabled={mode == "view"} />;
 
             case "email":
-                return <Input type="email" placeholder={field.placeholder} disabled={mode == "view"} />;
+                return <Input type="email" placeholder={placeholder} disabled={mode == "view"} />;
 
             case "select":
                 return (
-                    <Select placeholder={field.placeholder} disabled={mode == "view"}>
+                    <Select placeholder={placeholder} disabled={mode == "view"}>
                         {field.options?.map(op => (
                             <Select.Option key={op.value} value={op.value}>
                                 {op.label}
@@ -81,46 +75,36 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
                 return <DatePicker style={{ width: "100%" }} disabled={mode == "view"} />;
 
             default:
-                return <Input placeholder={field.placeholder} disabled={mode == "view"} />;
+                return <Input placeholder={placeholder} disabled={mode == "view"} />;
         }
     };
 
     const normalizeValidations = (rules: any[], fieldType: string) => {
         return rules.map(rule => {
             const newRule: any = { ...rule };
-
-
             if (fieldType === "text" || fieldType === "textarea") {
 
-                // min -> convert to min length rule
                 if (rule.min !== undefined) {
-                    newRule.min = rule.min; // length validation
+                    newRule.min = rule.min;
                     newRule.type = "string";
                 }
 
-                // max -> convert to max length rule
                 if (rule.max !== undefined) {
                     newRule.max = rule.max;
                     newRule.type = "string";
                 }
-
-                // pattern rule
                 if (rule.pattern) {
                     newRule.pattern = new RegExp(rule.pattern);
                 }
-
                 return newRule;
             }
 
             if (fieldType === "number") {
                 newRule.type = "number";
-
-                // Allow empty while typing
                 newRule.transform = (value: any) =>
                     value === "" || value === null || value === undefined
                         ? undefined
                         : Number(value);
-
                 return newRule;
             }
 
@@ -128,7 +112,6 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
                 newRule.type = "date";
                 return newRule;
             }
-
 
             if (fieldType === "checkbox" || fieldType === "select") {
                 return newRule;

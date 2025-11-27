@@ -133,7 +133,6 @@ function ItemMasterPage(): JSX.Element {
                 data={formValues}
                 dataId={selectedProduct?.productName}
                 onDelete={() => handleDelete(selectedProduct)}
-                onAddNew={() => handleAddNew}
             />)}
 
         </ListMasterDetailFormLayout>
