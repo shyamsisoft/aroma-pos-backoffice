@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Table, Button, Space, Input, Modal, Typography, theme, Popconfirm, message, List, InputNumber, Row, Col, Card } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, SettingOutlined } from '@ant-design/icons';
@@ -65,7 +66,7 @@ const ModifierView: React.FC<ModifierViewProps> = ({ groups, onSave, onDelete })
         <div style={{ padding: 24, height: '100%', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
                 <Typography.Title level={2} style={{ margin: 0 }}>Modifier Groups</Typography.Title>
-                <Button type="primary" icon={<PlusOutlined />} onClick={() => showModal()} style={{ background: '#10b981', borderColor: '#10b981' }}>Create Group</Button>
+                <Button type="primary" icon={<PlusOutlined />} onClick={() => showModal()}>Create Group</Button>
             </div>
 
             <Row gutter={[16, 16]}>

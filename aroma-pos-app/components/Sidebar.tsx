@@ -1,3 +1,7 @@
+
+
+
+
 import React from 'react';
 import { Layout, Menu, theme, Switch, Avatar, Typography, Badge } from 'antd';
 import { 
@@ -16,10 +20,14 @@ import {
   SunOutlined,
   UserOutlined,
   BellOutlined,
-  HistoryOutlined
+  HistoryOutlined,
+  SafetyCertificateOutlined,
+  PercentageOutlined,
+  ShopOutlined,
+  ShoppingCartOutlined
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Employee } from '../types';
+import { Employee, Role } from '../types';
 
 const { Sider } = Layout;
 const { Text } = Typography;
@@ -33,6 +41,7 @@ interface SidebarProps {
   currentUser: Employee | null;
   onOpenNotifications: () => void;
   notificationCount: number;
+  userPermissions: string[];
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ 
@@ -43,25 +52,30 @@ const Sidebar: React.FC<SidebarProps> = ({
     onLogout, 
     currentUser,
     onOpenNotifications,
-    notificationCount
+    notificationCount,
+    userPermissions
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { token } = theme.useToken();
   const role = currentUser?.role || 'Server';
   
-  // Define all possible items with route paths
+  // Define all possible items with required permission key
   const allItems = [
-    { key: '/', icon: <AppstoreOutlined />, label: 'Dashboard', roles: ['Admin', 'Manager', 'Server', 'Kitchen'] },
-    { key: '/menu', icon: <ReadOutlined />, label: 'Menu Items', roles: ['Admin', 'Manager', 'Server'] },
-    { key: '/modifiers', icon: <ControlOutlined />, label: 'Modifiers', roles: ['Admin', 'Manager'] },
-    { key: '/categories', icon: <TagsOutlined />, label: 'Categories', roles: ['Admin', 'Manager'] },
-    { key: '/devices', icon: <DesktopOutlined />, label: 'Devices', roles: ['Admin', 'Manager'] },
-    { key: '/employees', icon: <TeamOutlined />, label: 'Employees', roles: ['Admin', 'Manager'] },
-    { key: '/activities', icon: <HistoryOutlined />, label: 'Activity Log', roles: ['Admin', 'Manager'] },
-    { key: '/reports', icon: <BarChartOutlined />, label: 'Reports', roles: ['Admin', 'Manager'] },
-    { key: '/configuration', icon: <ToolOutlined />, label: 'Configurations', roles: ['Admin'] },
-    // Notification Item
+    { key: '/', icon: <AppstoreOutlined />, label: 'Dashboard', permission: 'view_dashboard' },
+    { key: '/orders', icon: <ShoppingCartOutlined />, label: 'Orders', permission: 'view_orders' },
+    { key: '/menu', icon: <ReadOutlined />, label: 'Menu Items', permission: 'view_menu' },
+    { key: '/modifiers', icon: <ControlOutlined />, label: 'Modifiers', permission: 'view_modifiers' },
+    { key: '/categories', icon: <TagsOutlined />, label: 'Categories', permission: 'view_categories' },
+    { key: '/taxes', icon: <PercentageOutlined />, label: 'Taxes', permission: 'view_taxes' },
+    { key: '/devices', icon: <DesktopOutlined />, label: 'Devices', permission: 'view_devices' },
+    { key: '/employees', icon: <TeamOutlined />, label: 'Employees', permission: 'view_employees' },
+    { key: '/branches', icon: <ShopOutlined />, label: 'Branches', permission: 'view_branches' },
+    { key: '/roles', icon: <SafetyCertificateOutlined />, label: 'Roles & Permissions', permission: 'manage_roles' },
+    { key: '/activities', icon: <HistoryOutlined />, label: 'Activity Log', permission: 'view_activity' },
+    { key: '/reports', icon: <BarChartOutlined />, label: 'Reports', permission: 'view_reports' },
+    { key: '/configuration', icon: <ToolOutlined />, label: 'Configurations', permission: 'config_view' },
+    // Notification Item - Always visible if logged in
     { 
         key: 'notifications', 
         icon: (
@@ -77,12 +91,15 @@ const Sidebar: React.FC<SidebarProps> = ({
                 )}
             </div>
         ), 
-        roles: ['Admin', 'Manager', 'Server', 'Kitchen'] 
+        permission: 'ALWAYS_VISIBLE'
     }
   ];
 
-  // Filter items based on current user role
-  const visibleItems = allItems.filter(item => item.roles.includes(role));
+  // Filter items based on current user permissions
+  const visibleItems = allItems.filter(item => {
+      if (item.permission === 'ALWAYS_VISIBLE') return true;
+      return userPermissions.includes(item.permission);
+  });
 
   const handleMenuClick = ({ key }: { key: string }) => {
       if (key === 'notifications') {

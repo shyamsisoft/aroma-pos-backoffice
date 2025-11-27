@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { 
     Form, 
@@ -9,7 +10,8 @@ import {
     theme, 
     message,
     Popconfirm,
-    Typography
+    Typography,
+    CollapseProps
 } from 'antd';
 import { DeleteOutlined, SaveOutlined } from '@ant-design/icons';
 
@@ -38,7 +40,6 @@ interface ProductFormProps {
 
 const { Option } = Select;
 const { TextArea } = Input;
-const { Panel } = Collapse;
 const { Title } = Typography;
 
 const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSave, onCancel, onDelete }) => {
@@ -48,9 +49,9 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSave, onCancel
 
   useEffect(() => {
     if (initialData) {
-      form.setFieldsValue(initialData);
+      (form as any).setFieldsValue(initialData);
     } else {
-      form.resetFields();
+      (form as any).resetFields();
     }
   }, [initialData, form]);
 
@@ -77,6 +78,100 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSave, onCancel
     background: token.colorBgContainer, 
     padding: 24 
   };
+
+  const collapseItems: CollapseProps['items'] = [
+      {
+          key: '1',
+          label: renderHeader("Basic Information"),
+          style: panelStyle,
+          children: (
+              <div style={contentStyle}>
+                  <Form.Item 
+                      label="Product Name" 
+                      name="name" 
+                      rules={[{ required: true, message: 'Please enter product name' }]}
+                  >
+                      <Input 
+                          placeholder="Enter product name" 
+                          size="large"
+                      />
+                  </Form.Item>
+                  
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                      <Form.Item 
+                          label="Category" 
+                          name="category"
+                          rules={[{ required: true, message: 'Please select a category' }]}
+                      >
+                          <Select placeholder="Select Category" size="large">
+                              {CATEGORIES.map(cat => <Option key={cat} value={cat}>{cat}</Option>)}
+                          </Select>
+                      </Form.Item>
+
+                      <Form.Item 
+                          label="SKU" 
+                          name="sku"
+                          rules={[{ required: true, message: 'Please enter SKU' }]}
+                      >
+                          <Input placeholder="Enter SKU" size="large" />
+                      </Form.Item>
+                  </div>
+
+                  <Form.Item label="Description" name="description">
+                      <TextArea rows={4} placeholder="Product description..." style={{ resize: 'none' }} />
+                  </Form.Item>
+              </div>
+          )
+      },
+      {
+          key: '2',
+          label: renderHeader("Pricing & Stock"),
+          style: panelStyle,
+          children: (
+              <div style={{ ...contentStyle, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+                  <Form.Item label="Price" name="price">
+                      <InputNumber 
+                          style={{ width: '100%' }} 
+                          min={0} 
+                          precision={2} 
+                          prefix="$" 
+                          size="large"
+                      />
+                  </Form.Item>
+                  <Form.Item label="Stock Quantity" name="stock">
+                      <InputNumber style={{ width: '100%' }} min={0} size="large" />
+                  </Form.Item>
+              </div>
+          )
+      },
+      {
+          key: '3',
+          label: renderHeader("Supplier Details"),
+          style: panelStyle,
+          children: (
+               <div style={contentStyle}>
+                  <Form.Item label="Supplier Name" name="supplier" style={{ margin: 0 }}>
+                      <Input placeholder="Enter supplier name" size="large" />
+                  </Form.Item>
+              </div>
+          )
+      },
+      {
+          key: '4',
+          label: renderHeader("Additional Information"),
+          style: panelStyle,
+          children: (
+               <div style={{ ...contentStyle, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+                  <Form.Item label="Weight" name="weight" style={{ margin: 0 }}>
+                      <Input placeholder="e.g. 1.5kg" size="large" />
+                  </Form.Item>
+                  <Form.Item label="Dimensions" name="dimensions" style={{ margin: 0 }}>
+                      <Input placeholder="e.g. 10x10x20 cm" size="large" />
+                  </Form.Item>
+              </div>
+          )
+      }
+  ];
 
   return (
     <div style={{ 
@@ -117,82 +212,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSave, onCancel
                 bordered={false}
                 style={{ background: 'transparent', display: 'flex', flexDirection: 'column', gap: 16 }}
                 expandIcon={({ isActive }) => <div style={{ color: 'white', transform: isActive ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s' }}>▼</div>}
-            >
-                <Panel header={renderHeader("Basic Information")} key="1" style={panelStyle}>
-                    <div style={contentStyle}>
-                        <Form.Item 
-                            label="Product Name" 
-                            name="name" 
-                            rules={[{ required: true, message: 'Please enter product name' }]}
-                        >
-                            <Input 
-                                placeholder="Enter product name" 
-                                size="large"
-                            />
-                        </Form.Item>
-                        
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                            <Form.Item 
-                                label="Category" 
-                                name="category"
-                                rules={[{ required: true, message: 'Please select a category' }]}
-                            >
-                                <Select placeholder="Select Category" size="large">
-                                    {CATEGORIES.map(cat => <Option key={cat} value={cat}>{cat}</Option>)}
-                                </Select>
-                            </Form.Item>
-
-                            <Form.Item 
-                                label="SKU" 
-                                name="sku"
-                                rules={[{ required: true, message: 'Please enter SKU' }]}
-                            >
-                                <Input placeholder="Enter SKU" size="large" />
-                            </Form.Item>
-                        </div>
-
-                        <Form.Item label="Description" name="description">
-                            <TextArea rows={4} placeholder="Product description..." style={{ resize: 'none' }} />
-                        </Form.Item>
-                    </div>
-                </Panel>
-
-                <Panel header={renderHeader("Pricing & Stock")} key="2" style={panelStyle}>
-                    <div style={{ ...contentStyle, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
-                        <Form.Item label="Price" name="price">
-                            <InputNumber 
-                                style={{ width: '100%' }} 
-                                min={0} 
-                                precision={2} 
-                                prefix="$" 
-                                size="large"
-                            />
-                        </Form.Item>
-                        <Form.Item label="Stock Quantity" name="stock">
-                            <InputNumber style={{ width: '100%' }} min={0} size="large" />
-                        </Form.Item>
-                    </div>
-                </Panel>
-
-                <Panel header={renderHeader("Supplier Details")} key="3" style={panelStyle}>
-                     <div style={contentStyle}>
-                        <Form.Item label="Supplier Name" name="supplier" style={{ margin: 0 }}>
-                            <Input placeholder="Enter supplier name" size="large" />
-                        </Form.Item>
-                    </div>
-                </Panel>
-
-                <Panel header={renderHeader("Additional Information")} key="4" style={panelStyle}>
-                     <div style={{ ...contentStyle, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
-                        <Form.Item label="Weight" name="weight" style={{ margin: 0 }}>
-                            <Input placeholder="e.g. 1.5kg" size="large" />
-                        </Form.Item>
-                        <Form.Item label="Dimensions" name="dimensions" style={{ margin: 0 }}>
-                            <Input placeholder="e.g. 10x10x20 cm" size="large" />
-                        </Form.Item>
-                    </div>
-                </Panel>
-            </Collapse>
+                items={collapseItems}
+            />
         </Form>
       </div>
 
@@ -231,14 +252,12 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSave, onCancel
         </Button>
         <Button 
             type="primary" 
-            onClick={() => form.submit()} 
+            onClick={() => (form as any).submit()} 
             icon={<SaveOutlined />}
             size="large"
             style={{ 
-                backgroundColor: '#10b981', 
-                borderColor: '#10b981', 
                 width: 120, 
-                boxShadow: '0 2px 4px rgba(16, 185, 129, 0.3)' 
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)' 
             }} 
         >
             Save

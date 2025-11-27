@@ -1,10 +1,12 @@
+
 import React from 'react';
 import CategoryView from '../components/CategoryView';
-import { Category, Device } from '../types';
+import { Category, Device, Tax } from '../types';
 
 interface CategoriesProps {
     categories: Category[];
     devices: Device[];
+    taxes: Tax[];
     onSave: (cat: Category) => void;
     onDelete: (id: string) => void;
 }

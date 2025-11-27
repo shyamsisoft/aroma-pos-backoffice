@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button, theme } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
@@ -75,9 +76,7 @@ const Menu: React.FC<MenuPageProps> = ({
                     onClick={handleCreateNewItem}
                     size="large"
                     style={{ 
-                        backgroundColor: '#10b981', 
-                        borderColor: '#10b981', 
-                        boxShadow: '0 4px 6px -1px rgba(16, 185, 129, 0.2)',
+                        boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
                         padding: '0 24px'
                     }}
                 >

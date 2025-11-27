@@ -1,20 +1,20 @@
 
-
 import React, { useState } from 'react';
 import { Table, Button, Space, Input, Modal, Typography, theme, Popconfirm, message, Select, Tag } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Category, Device } from '../types';
+import { Category, Device, Tax } from '../types';
 
 interface CategoryViewProps {
     categories: Category[];
-    devices?: Device[]; // Made optional to prevent breaking, but expected to be passed
+    devices?: Device[]; 
+    taxes?: Tax[];
     onSave: (cat: Category) => void;
     onDelete: (id: string) => void;
 }
 
 const { Option } = Select;
 
-const CategoryView: React.FC<CategoryViewProps> = ({ categories, devices = [], onSave, onDelete }) => {
+const CategoryView: React.FC<CategoryViewProps> = ({ categories, devices = [], taxes = [], onSave, onDelete }) => {
     const { token } = theme.useToken();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [editingCat, setEditingCat] = useState<Category | null>(null);
@@ -22,6 +22,7 @@ const CategoryView: React.FC<CategoryViewProps> = ({ categories, devices = [], o
     const [desc, setDesc] = useState('');
     const [selectedKds, setSelectedKds] = useState<string[]>([]);
     const [selectedPrinters, setSelectedPrinters] = useState<string[]>([]);
+    const [selectedTaxes, setSelectedTaxes] = useState<string[]>([]);
 
     const showModal = (cat?: Category) => {
         if (cat) {
@@ -30,12 +31,14 @@ const CategoryView: React.FC<CategoryViewProps> = ({ categories, devices = [], o
             setDesc(cat.description || '');
             setSelectedKds(cat.kdsDeviceIds || []);
             setSelectedPrinters(cat.printerDeviceIds || []);
+            setSelectedTaxes(cat.taxIds || []);
         } else {
             setEditingCat(null);
             setName('');
             setDesc('');
             setSelectedKds([]);
             setSelectedPrinters([]);
+            setSelectedTaxes([]);
         }
         setIsModalVisible(true);
     };
@@ -47,30 +50,46 @@ const CategoryView: React.FC<CategoryViewProps> = ({ categories, devices = [], o
             name,
             description: desc,
             kdsDeviceIds: selectedKds,
-            printerDeviceIds: selectedPrinters
+            printerDeviceIds: selectedPrinters,
+            taxIds: selectedTaxes
         };
         onSave(newCat);
         setIsModalVisible(false);
     };
 
-    const getDeviceNames = (ids?: string[]) => {
-        if (!ids || ids.length === 0) return null;
-        return ids.map(id => devices.find(d => d.id === id)?.name).filter(Boolean).join(', ');
-    };
-
     const columns = [
-        { title: 'Name', dataIndex: 'name', key: 'name', width: '25%', render: (t: string) => <strong style={{ color: token.colorText }}>{t}</strong> },
+        { title: 'Name', dataIndex: 'name', key: 'name', width: '20%', render: (t: string) => <strong style={{ color: token.colorText }}>{t}</strong> },
         { title: 'Description', dataIndex: 'description', key: 'description' },
+        { 
+            title: 'Taxes', 
+            dataIndex: 'taxIds', 
+            key: 'taxes',
+            render: (ids: string[]) => {
+                if(!ids || ids.length === 0) return <span style={{color: token.colorTextTertiary, fontSize: 12}}>No Tax</span>;
+                return (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                        {ids.map(id => {
+                            const t = taxes.find(tax => tax.id === id);
+                            return t ? <Tag key={id} color="purple">{t.name}</Tag> : null;
+                        })}
+                    </div>
+                );
+            }
+        },
         { 
             title: 'Assigned KDS', 
             dataIndex: 'kdsDeviceIds', 
             key: 'kds',
             render: (ids: string[]) => {
-                if(!ids || ids.length === 0) return <span style={{color: token.colorTextTertiary}}>-</span>;
-                return ids.map(id => {
-                    const d = devices.find(dev => dev.id === id);
-                    return d ? <Tag key={id} color="blue">{d.name}</Tag> : null;
-                });
+                if(!ids || ids.length === 0) return <span style={{color: token.colorTextTertiary, fontSize: 12}}>-</span>;
+                return (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                        {ids.map(id => {
+                            const d = devices.find(dev => dev.id === id);
+                            return d ? <Tag key={id} color="blue">{d.name}</Tag> : null;
+                        })}
+                    </div>
+                );
             }
         },
         { 
@@ -78,17 +97,21 @@ const CategoryView: React.FC<CategoryViewProps> = ({ categories, devices = [], o
             dataIndex: 'printerDeviceIds', 
             key: 'printers',
             render: (ids: string[]) => {
-                 if(!ids || ids.length === 0) return <span style={{color: token.colorTextTertiary}}>-</span>;
-                 return ids.map(id => {
-                    const d = devices.find(dev => dev.id === id);
-                    return d ? <Tag key={id} color="geekblue">{d.name}</Tag> : null;
-                });
+                 if(!ids || ids.length === 0) return <span style={{color: token.colorTextTertiary, fontSize: 12}}>-</span>;
+                 return (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                        {ids.map(id => {
+                            const d = devices.find(dev => dev.id === id);
+                            return d ? <Tag key={id} color="geekblue">{d.name}</Tag> : null;
+                        })}
+                     </div>
+                 );
             }
         },
         {
             title: 'Actions',
             key: 'actions',
-            width: '120px',
+            width: '100px',
             render: (_: any, record: Category) => (
                 <Space>
                     <Button type="text" icon={<EditOutlined style={{ color: token.colorPrimary }} />} onClick={() => showModal(record)} />
@@ -104,7 +127,7 @@ const CategoryView: React.FC<CategoryViewProps> = ({ categories, devices = [], o
         <div style={{ padding: 24, height: '100%', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
                 <Typography.Title level={2} style={{ margin: 0 }}>Categories</Typography.Title>
-                <Button type="primary" icon={<PlusOutlined />} onClick={() => showModal()} style={{ background: '#10b981', borderColor: '#10b981' }}>Add Category</Button>
+                <Button type="primary" icon={<PlusOutlined />} onClick={() => showModal()}>Add Category</Button>
             </div>
             <div style={{ background: token.colorBgContainer, borderRadius: 12, border: `1px solid ${token.colorBorderSecondary}`, overflow: 'hidden' }}>
                  <Table className="custom-table" dataSource={categories} columns={columns} rowKey="id" pagination={false} />
@@ -120,6 +143,21 @@ const CategoryView: React.FC<CategoryViewProps> = ({ categories, devices = [], o
                     <Input placeholder="Category Name" value={name} onChange={e => setName(e.target.value)} />
                     <Input.TextArea placeholder="Description (Optional)" value={desc} onChange={e => setDesc(e.target.value)} />
                     
+                    <div>
+                        <div style={{marginBottom: 6, fontWeight: 500}}>Applicable Taxes</div>
+                        <Select 
+                            mode="multiple" 
+                            style={{width: '100%'}} 
+                            placeholder="Select taxes"
+                            value={selectedTaxes}
+                            onChange={setSelectedTaxes}
+                        >
+                            {taxes.map(t => (
+                                <Option key={t.id} value={t.id}>{t.name} ({t.type === 'Percentage' ? `${(t.rate * 100).toFixed(2)}%` : `$${t.rate}`})</Option>
+                            ))}
+                        </Select>
+                    </div>
+
                     <div>
                         <div style={{marginBottom: 6, fontWeight: 500}}>Default KDS Routing</div>
                         <Select 

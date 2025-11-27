@@ -1,7 +1,9 @@
+
+
 import React, { useState } from 'react';
 import { Table, Button, Tag, Space, Typography, theme, Modal, Form, Input, Select, message, Popconfirm, Timeline, Card, Empty } from 'antd';
-import { UserAddOutlined, EditOutlined, DeleteOutlined, LockOutlined, NumberOutlined, HistoryOutlined } from '@ant-design/icons';
-import { Employee, Activity } from '../types';
+import { UserAddOutlined, EditOutlined, DeleteOutlined, LockOutlined, NumberOutlined, HistoryOutlined, ShopOutlined } from '@ant-design/icons';
+import { Employee, Activity, Branch } from '../types';
 import { MOCK_EMPLOYEES } from '../constants';
 
 const { Title, Text } = Typography;
@@ -10,9 +12,10 @@ const { Option } = Select;
 interface EmployeesViewProps {
     onLogActivity: (action: string, target: string) => void;
     activities: Activity[];
+    branches: Branch[];
 }
 
-const EmployeesView: React.FC<EmployeesViewProps> = ({ onLogActivity, activities }) => {
+const EmployeesView: React.FC<EmployeesViewProps> = ({ onLogActivity, activities, branches }) => {
   const [employees, setEmployees] = useState<Employee[]>(MOCK_EMPLOYEES);
   const { token } = theme.useToken();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,11 +30,11 @@ const EmployeesView: React.FC<EmployeesViewProps> = ({ onLogActivity, activities
   const showModal = (employee?: Employee) => {
     if (employee) {
         setEditingEmployee(employee);
-        form.setFieldsValue(employee);
+        (form as any).setFieldsValue(employee);
     } else {
         setEditingEmployee(null);
-        form.resetFields();
-        form.setFieldsValue({ status: 'Active', role: 'Server' });
+        (form as any).resetFields();
+        (form as any).setFieldsValue({ status: 'Active', role: 'Server' });
     }
     setIsModalOpen(true);
   };
@@ -49,7 +52,7 @@ const EmployeesView: React.FC<EmployeesViewProps> = ({ onLogActivity, activities
   };
 
   const handleOk = () => {
-      form.validateFields().then(values => {
+      (form as any).validateFields().then((values: any) => {
           if (editingEmployee) {
               setEmployees(employees.map(u => u.id === editingEmployee.id ? { ...u, ...values } : u));
               message.success('Employee updated');
@@ -70,6 +73,12 @@ const EmployeesView: React.FC<EmployeesViewProps> = ({ onLogActivity, activities
   // Filter activities for the selected user
   const userActivities = activities.filter(a => a.user === selectedUserForActivity?.name);
 
+  const getBranchName = (branchId?: string) => {
+      if (!branchId) return <span style={{ color: '#ccc' }}>Not Assigned</span>;
+      const b = branches.find(br => br.id === branchId);
+      return b ? b.name : <span style={{ color: '#ccc' }}>Unknown</span>;
+  };
+
   const columns = [
     {
       title: 'Name',
@@ -81,6 +90,17 @@ const EmployeesView: React.FC<EmployeesViewProps> = ({ onLogActivity, activities
       title: 'Email',
       dataIndex: 'email',
       key: 'email',
+    },
+    {
+      title: 'Branch',
+      dataIndex: 'branchId',
+      key: 'branchId',
+      render: (branchId: string) => (
+          <Space size={4}>
+              <ShopOutlined style={{ color: token.colorTextSecondary }} />
+              {getBranchName(branchId)}
+          </Space>
+      )
     },
     {
       title: 'POS Login',
@@ -139,7 +159,7 @@ const EmployeesView: React.FC<EmployeesViewProps> = ({ onLogActivity, activities
     <div style={{ height: '100%', padding: 24, overflowY: 'auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
          <Title level={2} style={{ margin: 0 }}>Staff Management</Title>
-         <Button type="primary" icon={<UserAddOutlined />} onClick={() => showModal()} style={{ background: '#22c55e', borderColor: '#22c55e' }}>Add Employee</Button>
+         <Button type="primary" icon={<UserAddOutlined />} onClick={() => showModal()}>Add Employee</Button>
       </div>
       
       <div style={{ background: token.colorBgContainer, borderRadius: 8, overflow: 'hidden', border: `1px solid ${token.colorBorder}` }}>
@@ -175,6 +195,14 @@ const EmployeesView: React.FC<EmployeesViewProps> = ({ onLogActivity, activities
                     <Input prefix={<NumberOutlined />} placeholder="e.g. 1001" maxLength={6} />
                 </Form.Item>
               </div>
+
+              <Form.Item name="branchId" label="Assigned Branch" rules={[{ required: true }]}>
+                  <Select placeholder="Select a branch">
+                      {branches.map(b => (
+                          <Option key={b.id} value={b.id}>{b.name}</Option>
+                      ))}
+                  </Select>
+              </Form.Item>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                 <Form.Item name="role" label="Role" rules={[{ required: true }]}>

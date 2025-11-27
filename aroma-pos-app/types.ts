@@ -2,30 +2,38 @@
 
 export interface Variant {
   id: string;
-  name: string; // e.g., "Small", "Large", "Spicy", "Standard"
+  name: string;
   price: number;
 }
 
 export interface Modifier {
   id: string;
   name: string;
-  price: number; // Extra cost
+  price: number;
 }
 
 export interface ModifierGroup {
   id: string;
-  name: string; // e.g., "Sides", "Temperature", "Toppings"
-  minSelection: number; // 0 for optional
-  maxSelection: number; // 1 for single choice, etc.
+  name: string;
+  minSelection: number;
+  maxSelection: number;
   modifiers: Modifier[];
+}
+
+export interface Tax {
+  id: string;
+  name: string;
+  rate: number;
+  type: 'Percentage' | 'Fixed';
 }
 
 export interface Category {
   id: string;
   name: string;
   description?: string;
-  kdsDeviceIds?: string[]; // References Device IDs (Type KDS)
-  printerDeviceIds?: string[]; // References Device IDs (Type Printer)
+  kdsDeviceIds?: string[];
+  printerDeviceIds?: string[];
+  taxIds?: string[];
 }
 
 export type DeviceType = 'POS' | 'KDS' | 'Printer' | 'Expeditor' | 'PAX';
@@ -35,7 +43,7 @@ export interface Device {
   id: string;
   name: string;
   type: DeviceType;
-  protocol: string; // 'None', 'TCP/IP', 'Serial', etc.
+  protocol: string;
   location: string;
   status: DeviceStatus;
   serialNumber?: string;
@@ -48,11 +56,43 @@ export interface MenuItem {
   name: string;
   categoryId: string;
   description?: string;
-  // basePrice removed, strictly use variants
   isAvailable: boolean;
   variants: Variant[];
-  modifierGroupIds: string[]; // References ModifierGroup IDs
-  // Device routing now handled via Category
+  modifierGroupIds: string[];
+}
+
+export type Role = 'Admin' | 'Manager' | 'Server' | 'Kitchen';
+
+// --- Updated Branch Interface ---
+export interface BranchAddress {
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  state: string;
+  country: string;
+  longitude: string;
+  latitude: string;
+}
+
+export interface BranchConfiguration {
+  maxFloors: number;
+  operationStartOnUtc: string; // ISO Date String
+  operationEndOnUtc: string;   // ISO Date String
+}
+
+export interface Branch {
+  id: string;
+  name: string;
+  code: string;
+  phoneNumber: string;
+  email: string;
+  isActive: boolean;
+  address: BranchAddress;
+  configuration: BranchConfiguration;
+  // Read-only timestamps from API
+  createdOnUtc?: string;
+  updatedOnUtc?: string;
+  status?: string; // UI helper
 }
 
 export interface Employee {
@@ -60,9 +100,10 @@ export interface Employee {
   name: string;
   email: string;
   password?: string;
-  loginNumber?: string; // POS Login PIN/Number
-  role: 'Admin' | 'Manager' | 'Server' | 'Kitchen';
+  loginNumber?: string;
+  role: Role;
   status: 'Active' | 'Inactive';
+  branchId?: string;
 }
 
 export interface Activity {
@@ -73,10 +114,83 @@ export interface Activity {
   time: Date;
 }
 
-export type ViewState = 'dashboard' | 'menu' | 'modifiers' | 'categories' | 'employees' | 'reports' | 'devices' | 'configuration';
+// --- Order System Interfaces ---
+
+export interface TicketModifier {
+    id: string;
+    name: string;
+    description?: string;
+    price: number;
+    isActive: boolean;
+    quantity: number;
+}
+
+export interface TicketVariant {
+    variantId: string;
+    variantName: string;
+    price: number;
+    status: string;
+}
+
+export interface TicketTax {
+    id: string;
+    name: string;
+    percentage: number;
+    isActive: boolean;
+}
+
+export interface TicketItem {
+    id: string;
+    itemId: string;
+    name: string;
+    quantity: number;
+    price: number;
+    portion: number;
+    discount: number;
+    isDiscountPercentage: boolean;
+    modifiers: TicketModifier[];
+    variant?: TicketVariant;
+    taxes: TicketTax[];
+}
+
+export interface TicketPayment {
+    id: string;
+    amount: number;
+    paymentType: number; // 0 = Cash, 1 = Card
+}
+
+export interface Ticket {
+    id: string;
+    ticketNumber: number;
+    discount: number;
+    isDiscountPercentage: boolean;
+    serviceCharge: number;
+    isServiceChargePercentage: boolean;
+    paymentStatus: number; 
+    items: TicketItem[];
+    payments: TicketPayment[];
+}
+
+export interface Order {
+    id: string;
+    orderNumber: number;
+    tableId: string;
+    splitedType: number;
+    orderType: number;
+    tickets: Ticket[];
+}
+
+export type ViewState = 'dashboard' | 'menu' | 'modifiers' | 'categories' | 'employees' | 'reports' | 'devices' | 'configuration' | 'roles' | 'taxes' | 'branches' | 'orders';
 
 export interface SidebarItem {
   id: ViewState;
   label: string;
   icon: React.ReactNode;
+}
+
+export interface Permission {
+  key: string;
+  label: string;
+  group: string;
+  description?: string;
 }

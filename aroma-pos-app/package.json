@@ -17,7 +17,7 @@
     "antd": "5.19.3",
     "@ant-design/colors": "7.0.2",
     "@ant-design/icons": "5.3.7",
-    "dayjs": "1.11.11"
+    "dayjs": "^1.11.19"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

@@ -1,5 +1,4 @@
 
-
 import React, { useState } from 'react';
 import { Table, Button, Space, Input, Modal, Typography, theme, Popconfirm, message, Tag, Select, InputNumber, Form, Tabs } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, DesktopOutlined, WifiOutlined, DisconnectOutlined, FilterOutlined, CreditCardOutlined } from '@ant-design/icons';
@@ -12,7 +11,6 @@ interface DeviceViewProps {
 }
 
 const { Option } = Select;
-const { TabPane } = Tabs;
 
 const DeviceView: React.FC<DeviceViewProps> = ({ devices, onSave, onDelete }) => {
     const { token } = theme.useToken();
@@ -26,20 +24,20 @@ const DeviceView: React.FC<DeviceViewProps> = ({ devices, onSave, onDelete }) =>
     const showModal = (device?: Device) => {
         if (device) {
             setEditingDevice(device);
-            form.setFieldsValue(device);
+            (form as any).setFieldsValue(device);
         } else {
             setEditingDevice(null);
-            form.resetFields();
+            (form as any).resetFields();
             // Default values based on active tab
             if (activeTab === 'pax') {
-                 form.setFieldsValue({ 
+                 (form as any).setFieldsValue({ 
                     status: 'Online', 
                     protocol: 'TCP/IP', 
                     type: 'PAX',
                     port: 10009 
                 });
             } else {
-                form.setFieldsValue({ 
+                (form as any).setFieldsValue({ 
                     status: 'Online', 
                     protocol: 'None', 
                     type: 'Printer' 
@@ -50,7 +48,7 @@ const DeviceView: React.FC<DeviceViewProps> = ({ devices, onSave, onDelete }) =>
     };
 
     const handleOk = () => {
-        form.validateFields().then(values => {
+        (form as any).validateFields().then((values: any) => {
             const newDevice: Device = {
                 id: editingDevice ? editingDevice.id : Date.now().toString(),
                 ...values
@@ -182,7 +180,7 @@ const DeviceView: React.FC<DeviceViewProps> = ({ devices, onSave, onDelete }) =>
         <div style={{ padding: 24, height: '100%', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
                 <Typography.Title level={2} style={{ margin: 0 }}>Device Management</Typography.Title>
-                <Button type="primary" icon={<PlusOutlined />} onClick={() => showModal()} style={{ background: '#10b981', borderColor: '#10b981' }}>
+                <Button type="primary" icon={<PlusOutlined />} onClick={() => showModal()}>
                     {activeTab === 'pax' ? 'Add Terminal' : 'Add Device'}
                 </Button>
             </div>
@@ -264,25 +262,23 @@ const DeviceView: React.FC<DeviceViewProps> = ({ devices, onSave, onDelete }) =>
                         <Select>
                             <Option value="None">None</Option>
                             <Option value="TCP/IP">TCP/IP</Option>
-                            <Option value="ESC/POS">ESC/POS (Epson)</Option>
-                            <Option value="Star">Star Micronics</Option>
-                            <Option value="OPOS">OPOS</Option>
-                            <Option value="Serial">Serial / RS232</Option>
+                            <Option value="ESC/POS">ESC/POS (Printer)</Option>
+                            <Option value="Serial">Serial</Option>
                         </Select>
                     </Form.Item>
 
-                    <Form.Item name="serialNumber" label="Serial Number">
-                        <Input placeholder="Device S/N" />
-                    </Form.Item>
-
-                    <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 16 }}>
-                         <Form.Item name="ipAddress" label="IP Address">
-                            <Input placeholder="192.168.x.x" />
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                        <Form.Item name="ipAddress" label="IP Address">
+                            <Input placeholder="192.168.1.xxx" />
                         </Form.Item>
                         <Form.Item name="port" label="Port">
-                            <InputNumber style={{ width: '100%' }} placeholder={activeTab === 'pax' ? "10009" : "9100"} />
+                            <InputNumber style={{ width: '100%' }} />
                         </Form.Item>
                     </div>
+
+                    <Form.Item name="serialNumber" label="Serial Number (Optional)">
+                        <Input />
+                    </Form.Item>
                 </Form>
             </Modal>
         </div>

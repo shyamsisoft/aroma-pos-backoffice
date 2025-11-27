@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { 
     Form, 
@@ -40,12 +41,12 @@ const MenuForm: React.FC<MenuFormProps> = ({ initialData, categories, modifierGr
 
   useEffect(() => {
     if (initialData) {
-      form.setFieldsValue(initialData);
+      (form as any).setFieldsValue(initialData);
       setVariants(initialData.variants || []);
     } else {
-      form.resetFields();
+      (form as any).resetFields();
       setVariants([{ id: Date.now().toString(), name: 'Standard', price: 0 }]); // Default variant for new items
-      form.setFieldsValue({ isAvailable: true, modifierGroupIds: [] });
+      (form as any).setFieldsValue({ isAvailable: true, modifierGroupIds: [] });
     }
   }, [initialData, form]);
 
@@ -261,14 +262,12 @@ const MenuForm: React.FC<MenuFormProps> = ({ initialData, categories, modifierGr
         </Button>
         <Button 
             type="primary" 
-            onClick={() => form.submit()} 
+            onClick={() => (form as any).submit()} 
             icon={<SaveOutlined />}
             size="large"
             style={{ 
-                backgroundColor: '#10b981', 
-                borderColor: '#10b981', 
                 width: 120, 
-                boxShadow: '0 2px 4px rgba(16, 185, 129, 0.3)' 
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)' 
             }} 
         >
             Save
