@@ -1,8 +1,7 @@
 import React, { useEffect } from "react";
 import { Form, Input, InputNumber, Button, Space, Card, Select, Radio, Checkbox, DatePicker, Collapse } from "antd";
 
-import type { FormSchema, FormFieldSchema, ProductModel } from "../types/FormFieldSchema";
-import HeadingComponent from "./Heading";
+import type { FormSchema, FormFieldSchema, ProductModel, SectionSchema } from "../types/FormFieldSchema";
 
 const { Panel } = Collapse;
 
@@ -140,8 +139,18 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
         });
     };
 
-
-
+    function renderCollapse(field: FormFieldSchema): { key: string; label: React.ReactNode; children?: React.ReactNode } | null {
+        if (!field) return null;
+        return {
+            key: field.name,
+            label: field.label,
+            children: (
+                <div>
+                    {/* Your fields */}
+                </div>
+            )
+        };
+    }
     return (
         <>
 
@@ -153,34 +162,29 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
                     onFinish={onSave}
                     className="lm-form"
                 >
+                    {/* {schema?.sections.map(section => ( */}
                     <Collapse
                         accordion
                         className="lm-collapse"
                         style={{ margin: -15 }}
                         defaultActiveKey={[schema ? schema.sections[0]?.title : "scmkey"]} // open first panel
-                    >
-                        {schema && schema.sections.map(section => (
-                            <Panel
-                                className="lm-panel"
-                                header={section.title}
-                                key={section.title}
-                            >
-                                {section.fields.map(field => (
-                                    <Form.Item
-                                        className="lm-form-item"
-                                        key={field.name}
-                                        label={field.type !== "checkbox" ? field.label : undefined}
-                                        name={field.name}
-                                        valuePropName={field.type === "checkbox" ? "checked" : "value"}
-                                        rules={normalizeValidations(field.validations as any, field.type)}
-                                    >
-                                        {renderField(field)}
-                                    </Form.Item>
-                                ))}
-                            </Panel>
-                        ))}
-                    </Collapse>
-
+                        items={schema?.sections.map(section => ({
+                            key: section.title,
+                            label: section.title,
+                            children: (
+                                section.fields.map(field => <Form.Item
+                                    className="lm-form-item"
+                                    key={field.name}
+                                    label={field.type !== "checkbox" ? field.label : undefined}
+                                    name={field.name}
+                                    valuePropName={field.type === "checkbox" ? "checked" : "value"}
+                                    rules={normalizeValidations(field.validations as any, field.type)}
+                                >
+                                    {renderField(field)}
+                                </Form.Item>)
+                            )
+                        }))}
+                    />
 
                     <Space className="lm-button-row" style={{ marginTop: 16 }}>
                         {mode === "view" && (
@@ -205,7 +209,7 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, onSave, onCancel,
                         )}
                     </Space>
                 </Form>
-            </Card>
+            </Card >
         </>
 
     );
