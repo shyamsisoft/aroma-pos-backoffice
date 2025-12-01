@@ -6,7 +6,7 @@ import { Modal } from "antd";
 
 import { type FormSchema, type ProductModel } from "../types/FormFieldSchema";
 import APGrid from "../components/APGrid";
-import FormComponent from "../components/FormComponent";
+import APForm from "../components/APForm";
 import ListMasterDetailFormLayout from "../components/ListMasterDetailFormLayout";
 
 const { confirm } = Modal;
@@ -124,7 +124,7 @@ function ItemMasterPage(): JSX.Element {
                 baseColumns={columns}
                 RowClick={(record) => { handleRowClick(record); }}
             />
-            {(selectedProduct || formMode === "add") && (<FormComponent
+            {(selectedProduct || formMode === "add") && (<APForm
                 schema={formSchema}
                 mode={formMode}
                 data={formValues}

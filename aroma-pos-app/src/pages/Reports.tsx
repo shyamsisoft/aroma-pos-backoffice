@@ -1,14 +1,8 @@
-import React, { useState } from "react";
-
-
-export interface DynamicFormValues {
-    key?: string;
-    [field: string]: any; // Allow any dynamic field
-}
+import React from "react";
 
 const reportPage: React.FC = () => {
     return (
-        <div></div>
+        <h1>Reprorts page</h1>
     )
 };
 

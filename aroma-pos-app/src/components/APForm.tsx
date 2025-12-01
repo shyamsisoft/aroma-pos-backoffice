@@ -21,7 +21,7 @@ export interface FormComponentProps {
 
 }
 
-const FormComponent: React.FC<FormComponentProps> = ({ schema, data, dataId, mode, onEdit, onSave, onCancel, onDelete }) => {
+export default function APForm({ schema, data, dataId, mode, onEdit, onSave, onCancel, onDelete }: FormComponentProps): React.ReactElement {
 
     const [form] = Form.useForm();
     useEffect(() => {
@@ -182,5 +182,3 @@ const FormComponent: React.FC<FormComponentProps> = ({ schema, data, dataId, mod
 
     );
 };
-
-export default FormComponent;
