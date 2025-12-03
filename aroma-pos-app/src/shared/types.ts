@@ -6,18 +6,24 @@ export interface Variant {
   price: number;
 }
 
-export interface Modifier {
+export interface ModifierItem {
   id: string;
   name: string;
-  price: number; // Extra cost
+  price: number; // Base price
+}
+
+export interface GroupModifierConfig {
+    modifierId: string;
+    minQuantity: number; // e.g., 0
+    maxQuantity: number; // e.g., 1 or 5
 }
 
 export interface ModifierGroup {
   id: string;
   name: string; // e.g., "Sides", "Temperature", "Toppings"
-  minSelection: number; // 0 for optional
-  maxSelection: number; // 1 for single choice, etc.
-  modifiers: Modifier[];
+  minSelection: number; // Group level constraint
+  maxSelection: number; // Group level constraint
+  modifiers: GroupModifierConfig[];
 }
 
 export interface Category {

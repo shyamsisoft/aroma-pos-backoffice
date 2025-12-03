@@ -1,6 +1,6 @@
 
 
-import { MenuItem, Employee, ModifierGroup, Category, Device } from './types';
+import { MenuItem, Employee, ModifierGroup, Category, Device, ModifierItem } from './types';
 
 export const MOCK_CATEGORIES: Category[] = [
   { 
@@ -33,6 +33,18 @@ export const MOCK_CATEGORIES: Category[] = [
   },
 ];
 
+export const MOCK_MODIFIER_ITEMS: ModifierItem[] = [
+    { id: 'm1', name: 'Fries', price: 0 },
+    { id: 'm2', name: 'Onion Rings', price: 1.50 },
+    { id: 'm3', name: 'Side Salad', price: 0 },
+    { id: 'm4', name: 'Rare', price: 0 },
+    { id: 'm5', name: 'Medium', price: 0 },
+    { id: 'm6', name: 'Well Done', price: 0 },
+    { id: 'm7', name: 'Extra Cheese', price: 2.00 },
+    { id: 'm8', name: 'Pepperoni', price: 1.50 },
+    { id: 'm9', name: 'Mushrooms', price: 1.00 },
+];
+
 export const MOCK_MODIFIER_GROUPS: ModifierGroup[] = [
   {
     id: 'mg1',
@@ -40,9 +52,9 @@ export const MOCK_MODIFIER_GROUPS: ModifierGroup[] = [
     minSelection: 1,
     maxSelection: 1,
     modifiers: [
-      { id: 'm1', name: 'Fries', price: 0 },
-      { id: 'm2', name: 'Onion Rings', price: 1.50 },
-      { id: 'm3', name: 'Side Salad', price: 0 },
+      { modifierId: 'm1', minQuantity: 0, maxQuantity: 1 },
+      { modifierId: 'm2', minQuantity: 0, maxQuantity: 1 },
+      { modifierId: 'm3', minQuantity: 0, maxQuantity: 1 },
     ]
   },
   {
@@ -51,9 +63,9 @@ export const MOCK_MODIFIER_GROUPS: ModifierGroup[] = [
     minSelection: 1,
     maxSelection: 1,
     modifiers: [
-      { id: 'm4', name: 'Rare', price: 0 },
-      { id: 'm5', name: 'Medium', price: 0 },
-      { id: 'm6', name: 'Well Done', price: 0 },
+      { modifierId: 'm4', minQuantity: 0, maxQuantity: 1 },
+      { modifierId: 'm5', minQuantity: 0, maxQuantity: 1 },
+      { modifierId: 'm6', minQuantity: 0, maxQuantity: 1 },
     ]
   },
   {
@@ -62,9 +74,9 @@ export const MOCK_MODIFIER_GROUPS: ModifierGroup[] = [
     minSelection: 0,
     maxSelection: 5,
     modifiers: [
-      { id: 'm7', name: 'Extra Cheese', price: 2.00 },
-      { id: 'm8', name: 'Pepperoni', price: 1.50 },
-      { id: 'm9', name: 'Mushrooms', price: 1.00 },
+      { modifierId: 'm7', minQuantity: 0, maxQuantity: 2 },
+      { modifierId: 'm8', minQuantity: 0, maxQuantity: 2 },
+      { modifierId: 'm9', minQuantity: 0, maxQuantity: 2 },
     ]
   }
 ];

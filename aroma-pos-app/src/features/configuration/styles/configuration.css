@@ -1,0 +1,14 @@
+/* Make tab content fill available height */
+.ant-tabs-content-holder {
+    height: 100%;
+}
+
+.ant-tabs-content {
+    height: 100%;
+}
+
+.ant-tabs-tabpane {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
