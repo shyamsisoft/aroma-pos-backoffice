@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Card, Statistic, List, Avatar, Typography, theme } from 'antd';
+import { Row, Col, List, Avatar, Typography, theme } from 'antd';
 import { 
     DollarOutlined, 
     ShoppingOutlined, 
@@ -7,6 +7,7 @@ import {
     RiseOutlined,
 } from '@ant-design/icons';
 import { Activity } from '../../../shared/types';
+import Card from 'antd/es/card/Card';
 
 const { Title, Text } = Typography;
 
@@ -20,7 +21,6 @@ const StatCard: React.FC<{
     isDarkMode?: boolean;
 }> = ({ title, value, icon, color, bg, trend, isDarkMode }) => {
     
-    // Supabase Style: Cleaner, reliant on borders
     const { token } = theme.useToken();
 
     return (
@@ -31,7 +31,6 @@ const StatCard: React.FC<{
                 borderRadius: 6,
                 background: token.colorBgContainer,
                 borderColor: token.colorBorder,
-                // No shadow in dark mode, subtle in light
                 boxShadow: isDarkMode ? 'none' : '0 1px 2px rgba(0,0,0,0.05)',
             }}
             bodyStyle={{ padding: 20 }}
@@ -86,7 +85,6 @@ interface DashboardViewProps {
 const DashboardView: React.FC<DashboardViewProps> = ({ isDarkMode, activities }) => {
   const { token } = theme.useToken();
   
-  // Format relative time helper
   const getRelativeTime = (date: Date) => {
       const now = new Date();
       const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
@@ -117,7 +115,7 @@ const DashboardView: React.FC<DashboardViewProps> = ({ isDarkMode, activities })
                     title="Total Orders" 
                     value="1,203" 
                     icon={<ShoppingOutlined />} 
-                    color="#6132C0" // Purple
+                    color="#6132C0"
                     bg="#f3e8ff"
                     trend="+5.2%"
                     isDarkMode={isDarkMode}

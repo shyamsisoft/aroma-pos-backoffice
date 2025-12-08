@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Checkbox, Typography, theme, message } from 'antd';
+import { Form, Input, Button, Checkbox, Typography, theme, Row, Col, Grid, Modal } from 'antd';
 import { UserOutlined, LockOutlined, LoginOutlined } from '@ant-design/icons';
 import { Employee } from '../../../shared/types';
-import { MOCK_EMPLOYEES } from '../../../shared/constants';
-import Card from 'antd/es/card/Card';
-import { login as loginService } from '../api/authService';
+import { authService } from '../api/auth.service';
+import { showErrorMessage } from '@/src/shared/types/ui/ErrorMessageModel';
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
+const { useBreakpoint } = Grid;
 
 interface LoginViewProps {
   onLogin: (user: Employee) => void;
@@ -15,171 +15,141 @@ interface LoginViewProps {
 const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
   const { token } = theme.useToken();
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [popup, contextHolder] = Modal.useModal();
+  
+  const screens = useBreakpoint();
 
   const onFinish = async (values: any) => {
-    setErrorMessage(null);
     setLoading(true);
     try {
-      const response = await loginService(values.email, values.password);
-      if (response.success) {
-        onLogin(response.user);
-      } else {
-        message.error('Invalid credentials');
-        console.log(response.message);
-        setErrorMessage(response.message);
-        setLoading(false);
-      }
+      const user = await authService.login(values.email, values.password);
+      onLogin(user);
     } catch (error: any) {
-      console.log(error);
+      console.error("Login flow caught error", error);
+
+      showErrorMessage(popup, error, "Login Failed");
+
+    } finally {
       setLoading(false);
-      message.error(error?.response?.data?.message || 'Invalid credentials');
     }
   };
 
   return (
-    <div
-      style={{
-        height: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        background: `linear-gradient(135deg, ${token.colorBgLayout} 0%, #ede9fe 100%)`, // Light purple gradient
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
-      {/* Decorative Background Circle */}
-      <div
-        style={{
-          position: 'absolute',
-          top: -100,
-          right: -100,
-          width: 400,
-          height: 400,
-          borderRadius: '50%',
-          background: token.colorPrimary,
-          opacity: 0.1,
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          bottom: -50,
-          left: -50,
-          width: 300,
-          height: 300,
-          borderRadius: '50%',
-          background: '#10b981',
-          opacity: 0.1,
-        }}
-      />
+    <div style={{ height: '100vh', width: '100vw', overflow: 'hidden', background: token.colorBgLayout }}>
+      {contextHolder}
 
-      <Card
-        style={{
-          width: 420,
-          boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
-          borderRadius: 16,
-          border: `1px solid ${token.colorBorderSecondary}`,
-          zIndex: 1,
-        }}
-        bodyStyle={{ padding: '40px 32px' }}
-      >
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div
-            style={{
-              width: 64,
-              height: 64,
-              background: token.colorPrimary,
-              borderRadius: 12,
-              margin: '0 auto 16px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 32,
-              fontWeight: 800,
-              color: 'white',
-              boxShadow: '0 4px 12px rgba(97, 50, 192, 0.4)',
-            }}
-          >
-            A
-          </div>
-          <Title level={3} style={{ marginBottom: 4, fontWeight: 700, color: token.colorPrimary }}>
-            Aroma POS
-          </Title>
-          <Text type="secondary">Sign in to manage your restaurant</Text>
-        </div>
-
-        <Form
-          name="login"
-          initialValues={{ remember: true}}
-          onFinish={onFinish}
-          layout="vertical"
-          size="large"
+      <Row style={{ height: '100%' }}>
+        <Col 
+          xs={0} md={12} lg={14}
+          style={{ 
+            background: `linear-gradient(135deg, ${token.colorPrimary} 0%, #3b0a45 100%)`,
+            position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden'
+          }}
         >
-          <Form.Item
-            name="email"
-            rules={[
-              { required: true, message: 'Please input your Email!' },
-              { type: 'email', message: 'Please enter a valid email!' },
-            ]}
-          >
-            <Input prefix={<UserOutlined style={{ color: token.colorTextTertiary }} />} placeholder="Email" />
-          </Form.Item>
-
-          <Form.Item
-            name="password"
-            rules={[{ required: true, message: 'Please input your Password!' }]}
-          >
-            <Input.Password
-              prefix={<LockOutlined style={{ color: token.colorTextTertiary }} />}
-              placeholder="Password"
-            />
-          </Form.Item>
-
-          {errorMessage && (
-            <Text style={{ color: 'red', fontSize: 12, marginBottom: 8 }}>
-              {errorMessage}
-            </Text>
-          )}
-
-
-          <Form.Item>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Form.Item name="remember" valuePropName="checked" noStyle>
-                <Checkbox>Remember me</Checkbox>
-              </Form.Item>
-              <a href="#" style={{ color: token.colorPrimary, fontSize: 13 }}>
-                Forgot password?
-              </a>
+            <div style={{ position: 'absolute', top: '-10%', right: '-10%', width: '50%', height: '50%', background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }}></div>
+            <div style={{ position: 'absolute', bottom: '-20%', left: '-10%', width: '60%', height: '60%', background: 'rgba(255,255,255,0.03)', borderRadius: '50%' }}></div>
+            
+            <div style={{ position: 'relative', zIndex: 2, textAlign: 'center', padding: 60, maxWidth: 600 }}>
+                <div style={{ 
+                    width: 80, height: 80, 
+                    background: 'rgba(255,255,255,0.1)', 
+                    backdropFilter: 'blur(20px)',
+                    borderRadius: 20, 
+                    margin: '0 auto 32px',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 32, color: '#fff', fontWeight: 800,
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
+                }}>
+                    A
+                </div>
+                <Title level={1} style={{ color: '#fff', marginBottom: 24, fontSize: 48 }}>Aroma POS</Title>
+                <Paragraph style={{ color: 'rgba(255,255,255,0.8)', fontSize: 18, lineHeight: 1.6 }}>
+                    Manage your restaurant operations with precision, speed, and intelligence. 
+                    The comprehensive ERP solution for the modern food industry.
+                </Paragraph>
             </div>
-          </Form.Item>
+        </Col>
 
-          <Form.Item style={{ marginBottom: 12 }}>
-            <Button
-              type="primary"
-              htmlType="submit"
-              block
-              loading={loading}
-              icon={<LoginOutlined />}
-              style={{
-                height: 48,
-                fontSize: 16,
-                fontWeight: 600,
-                background: token.colorPrimary,
-                borderColor: token.colorPrimary,
-                boxShadow: '0 4px 14px 0 rgba(97, 50, 192, 0.3)',
-              }}
-            >
-              Sign In
-            </Button>
-          </Form.Item>
-        </Form>
-      </Card>
+        <Col 
+          xs={24} md={12} lg={10}
+          style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center',
+            background: token.colorBgContainer
+          }}
+        >
+            <div style={{ width: '100%', maxWidth: 420, padding: 40 }}>
+                <div style={{ textAlign: 'center', marginBottom: 40 }}>
+                    <Title level={2} style={{ color: token.colorPrimary, marginBottom: 8 }}>Welcome Back</Title>
+                    <Text type="secondary">Please enter your credentials to access your dashboard.</Text>
+                </div>
 
-      <div style={{ position: 'absolute', bottom: 20, textAlign: 'center', width: '100%' }}>
-        <Text type="secondary" style={{ fontSize: 12 }}>© 2024 Aroma POS Systems. All rights reserved.</Text>
-      </div>
+                <Form
+                    name="login_form"
+                    layout="vertical"
+                    size="large"
+                    onFinish={onFinish}
+                    initialValues={{ remember: true }}
+                    requiredMark={false}
+                >
+                    <Form.Item
+                        name="email"
+                        label="Email Address"
+                        rules={[
+                            { required: true, message: 'Please enter your email' },
+                            { type: 'email', message: 'Please enter a valid email' }
+                        ]}
+                    >
+                        <Input prefix={<UserOutlined style={{ color: token.colorTextTertiary }} />} placeholder="name@company.com" />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="password"
+                        label="Password"
+                        rules={[{ required: true, message: 'Please enter your password' }]}
+                    >
+                        <Input.Password prefix={<LockOutlined style={{ color: token.colorTextTertiary }} />} placeholder="••••••••" />
+                    </Form.Item>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
+                        <Form.Item name="remember" valuePropName="checked" noStyle>
+                            <Checkbox>Remember me</Checkbox>
+                        </Form.Item>
+                        <a href="#" style={{ color: token.colorPrimary, fontWeight: 500 }}>Forgot Password?</a>
+                    </div>
+
+                    <Form.Item>
+                        <Button 
+                            type="primary" 
+                            htmlType="submit" 
+                            block 
+                            loading={loading}
+                            icon={!loading && <LoginOutlined />}
+                            style={{ 
+                                height: 48, 
+                                fontSize: 16, 
+                                borderRadius: 8,
+                                fontWeight: 600
+                            }}
+                        >
+                            Sign In
+                        </Button>
+                    </Form.Item>
+                </Form>
+
+                <div style={{ textAlign: 'center', marginTop: 32 }}>
+                    <Text type="secondary" style={{ fontSize: 12 }}>
+                        Aroma POS System v2.0 • Secure Connection
+                    </Text>
+                </div>
+            </div>
+        </Col>
+      </Row>
     </div>
   );
 };

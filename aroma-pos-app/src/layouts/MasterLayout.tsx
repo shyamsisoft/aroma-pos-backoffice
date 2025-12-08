@@ -3,7 +3,7 @@ import { Layout, Drawer, List, Avatar, Typography } from 'antd';
 import { BellOutlined } from '@ant-design/icons';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
-import { Employee } from '../shared/types';
+import { Employee, Role } from '../shared/types';
 
 const { Content } = Layout;
 const { Text } = Typography;
@@ -13,18 +13,22 @@ interface MasterLayoutProps {
   isDarkMode: boolean;
   setIsDarkMode: (isDark: boolean) => void;
   onLogout: () => void;
+  rolePermissions: Record<Role, string[]>;
 }
 
-const MasterLayout: React.FC<MasterLayoutProps> = ({ currentUser, isDarkMode, setIsDarkMode, onLogout }) => {
+const MasterLayout: React.FC<MasterLayoutProps> = ({ currentUser, isDarkMode, setIsDarkMode, onLogout, rolePermissions }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
 
-  // Mock Notifications
   const notifications = [
     { title: 'Low Stock Alert', desc: 'Burger Buns are running low (5 packs left).', time: '10 min ago' },
     { title: 'New Order', desc: 'Order #1024 received from Table 5.', time: '1 hr ago' },
     { title: 'Shift Report', desc: 'Daily sales report is ready for review.', time: '3 hrs ago' },
   ];
+  
+  const userPermissions = currentUser && rolePermissions[currentUser.role] 
+    ? rolePermissions[currentUser.role] 
+    : [];
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -37,11 +41,10 @@ const MasterLayout: React.FC<MasterLayoutProps> = ({ currentUser, isDarkMode, se
         currentUser={currentUser}
         onOpenNotifications={() => setIsNotifOpen(true)}
         notificationCount={notifications.length}
+        userPermissions={userPermissions}
       />
 
       <Layout style={{ position: 'relative' }}>
-        
-        {/* Notification Drawer */}
         <Drawer title="Notifications" placement="right" onClose={() => setIsNotifOpen(false)} open={isNotifOpen}>
             <List
               itemLayout="horizontal"
@@ -62,8 +65,6 @@ const MasterLayout: React.FC<MasterLayoutProps> = ({ currentUser, isDarkMode, se
               )}
             />
         </Drawer>
-
-        {/* Main Content Area */}
         <Content style={{ margin: '24px 32px 24px 24px', overflow: 'hidden', display: 'flex', flexDirection: 'column', height: 'calc(100vh - 48px)' }}>
             <Outlet />
         </Content>
