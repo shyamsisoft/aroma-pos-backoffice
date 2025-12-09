@@ -54,11 +54,11 @@ export const authService = {
         localStorage.setItem('refreshToken', data.refreshToken);
 
         const payload = decodeToken(data.accessToken);
-        const userRole = data.roles && data.roles.length > 0 ? data.roles[0] : (payload.UserRole || 'server');
+        const userRole = data.roles && data.roles.length > 0 ? data.roles[0] : (payload.role || 'server');
         
         const user: Employee = {
             id: payload.sub || 'unknown',
-            name: payload.Username || payload.unique_name || email.split('@')[0],
+            name: payload.username || payload.unique_name || email.split('@')[0],
             email: email,
             role: mapRole(userRole),
             status: 'Active',
